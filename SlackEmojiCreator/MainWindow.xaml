@@ -19,15 +19,23 @@
             Content="Account" />
         <Button
             Width="300"
-            Height="300"
-            VerticalAlignment="Bottom"
+            Height="50"
+            Margin="0,100,0,0"
+            VerticalAlignment="Top"
             Click="UploadButton_Click"
             Content="Upload" />
+        <Image
+            x:Name="textImage"
+            Width="250"
+            Height="250"
+            VerticalAlignment="Bottom" />
         <TextBox
             x:Name="inputTextBox"
             Width="200"
+            Height="100"
             Margin="5"
             HorizontalAlignment="Left"
+            VerticalAlignment="Top"
             AllowDrop="True"
             Drop="DropFiles"
             PreviewDragOver="Input_PreviewDragOver"
@@ -37,6 +45,13 @@
             Width="200"
             Margin="5"
             HorizontalAlignment="Right" />
+        <TextBox
+            x:Name="emojiTextBox"
+            Width="200"
+            Height="30"
+            HorizontalAlignment="Left"
+            KeyDown="EmojText_KeyDown"
+            Text="Enter" />
 
     </Grid>
 </Window>

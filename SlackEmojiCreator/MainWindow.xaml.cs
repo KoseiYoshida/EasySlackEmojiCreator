@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace SlackEmojiCreator
 {
@@ -14,13 +19,45 @@ namespace SlackEmojiCreator
     {
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent();            
+
         }
 
         private string[] currentInputFilesPath;
 
+
+        // TODO: 別クラス、非同期できるようにする
+        private void Upload_TextEmoji()
+        {
+
+            var text = emojiTextBox.Text;
+
+
+            // TODO: 
+            Byte[] imageArray;
+            var encoder = new PngBitmapEncoder();
+
+            var bitmapSource = textImage.Source.Clone() as BitmapSource;
+            encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+            using (var ms = new MemoryStream())
+            {
+                encoder.Save(ms);
+                // TODO: 非同期にする
+                imageArray = ms.ToArray();
+                //await ms.ReadAsync(imageArray, 0, (int)ms.Length);
+            }
+
+            var uploader = new LocalFileEmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
+            Task.Run(() => uploader.UploadEmojiAsync(imageArray, text));
+
+            // TODO: 失敗判定をする
+            outputTextBox.Text = $"Add {text} succeeded.";
+            return;
+        }
+
         private void UploadButton_Click(object sender, RoutedEventArgs e)
         {
+
 
             if (currentInputFilesPath == null || currentInputFilesPath.Length == 0)
             {
@@ -119,6 +156,27 @@ namespace SlackEmojiCreator
             window.Owner = this;
             window.ShowDialog();
             
+        }
+
+        private void SetTextAsImage(string text, System.Windows.Controls.Image targetImage)
+        {
+            Bitmap canvas = new Bitmap((int)targetImage.Width, (int)targetImage.Height);
+            Graphics g = Graphics.FromImage(canvas);
+            Font font = new Font("MS UI Gothic", 80);
+            Rectangle rect = new Rectangle(0, 0, (int)targetImage.Width, (int)targetImage.Height);
+            g.FillRectangle(System.Drawing.Brushes.White, rect);
+            g.DrawString(text, font, System.Drawing.Brushes.Blue, rect);
+            font.Dispose();
+            g.Dispose();
+            IntPtr hbitmap = canvas.GetHbitmap();
+            targetImage.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hbitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+        }
+
+        private void EmojText_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            var textbox = (sender as TextBox);
+            SetTextAsImage(textbox.Text, textImage);
         }
     }
 }

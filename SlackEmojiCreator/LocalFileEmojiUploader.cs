@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace SlackEmojiCreator
 {
@@ -68,6 +73,46 @@ namespace SlackEmojiCreator
                 if (isSucceeded)
                 {
                     Console.WriteLine($"Add {filePath} succeeded.");
+                }
+                else
+                {
+                    Console.WriteLine($"Post failed. {responseContent}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"error : {ex}");
+            }
+        }
+
+
+        // TODO: 
+        public async Task UploadEmojiAsync(byte[] imageArray, string fileName)
+        {           
+
+            // TODO: 不正な拡張子を防ぐ処理を書く。
+
+            var uri = GetEmojiAddUri();
+
+            // 大文字のアルファベットは絵文字の名前で使えないので小文字にする。
+            fileName = fileName.ToLowerInvariant();
+
+            MultipartFormDataContent content = new MultipartFormDataContent();
+            ByteArrayContent imageBytes = new ByteArrayContent(imageArray);
+            content.Add(imageBytes, "image", fileName);
+            content.Add(new StringContent("data"), "mode");
+            content.Add(new StringContent(token), "token");
+            content.Add(new StringContent(fileName), "name");
+
+            try
+            {
+                var msg = await client.PostAsync(uri, content);
+                // HttpResponseMessage.StatusはPostが失敗してもOKになってしまう。なので、Contentを確認する。
+                var responseContent = await msg.Content.ReadAsStringAsync();
+                var isSucceeded = responseContent == "{\"ok\":true}";
+                if (isSucceeded)
+                {
+                    Console.WriteLine($"Add {fileName} succeeded.");
                 }
                 else
                 {
