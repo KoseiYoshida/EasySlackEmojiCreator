@@ -154,8 +154,7 @@ namespace SlackEmojiCreator
         {
             var window = new AccountWindow();
             window.Owner = this;
-            window.ShowDialog();
-            
+            window.ShowDialog();            
         }
 
         private void SetTextAsImage(string text, System.Windows.Controls.Image targetImage)
@@ -173,6 +172,7 @@ namespace SlackEmojiCreator
 
         }
 
+        // TODO: keydownだとタイミングが合わない
         private void EmojText_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             var textbox = (sender as TextBox);

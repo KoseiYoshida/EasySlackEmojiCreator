@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Net.Http;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace SlackEmojiCreator
 {
@@ -86,7 +81,7 @@ namespace SlackEmojiCreator
         }
 
 
-        // TODO: 
+
         public async Task UploadEmojiAsync(byte[] imageArray, string fileName)
         {           
 
