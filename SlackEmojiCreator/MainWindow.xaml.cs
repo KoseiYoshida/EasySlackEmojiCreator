@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -9,6 +10,8 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Brush = System.Drawing.Brush;
+using Brushes = System.Drawing.Brushes;
 
 namespace SlackEmojiCreator
 {
@@ -19,25 +22,102 @@ namespace SlackEmojiCreator
     {
         public MainWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
+
+            images = new System.Windows.Controls.Image[4]
+            {
+                image1,
+                image2,
+                image3,
+                image4
+            };
+
+            textColors = new SolidBrush[4]
+            {
+                new SolidBrush(System.Drawing.Color.Black),
+                new SolidBrush(System.Drawing.Color.Red),
+                new SolidBrush(System.Drawing.Color.Green),
+                new SolidBrush(System.Drawing.Color.Blue),
+            };
 
         }
 
-        private string[] currentInputFilesPath;
+        private System.Windows.Controls.Image[] images;
 
+        private readonly SolidBrush[] textColors;
 
-        // TODO: 別クラス、非同期できるようにする
-        private void Upload_TextEmoji()
+        private void SetTextAsImage(string text, System.Windows.Controls.Image targetImage, Brush brush)
         {
+            // TODO: ソースがなく、widthやheightがautoのときの取得方法を調べる
+            //var width = (int)targetImage.ActualWidth
+            //var height = (int)targetImage.ActualHeight;
+            var width = 100;
+            var height = 100;
 
-            var text = emojiTextBox.Text;
+            Bitmap canvas = new Bitmap(width, height);
+            Graphics g = Graphics.FromImage(canvas);
+            Font font = new Font("MS UI Gothic", 40);
+            Rectangle rect = new Rectangle(0, 0, width, height);
+            g.FillRectangle(System.Drawing.Brushes.White, rect);
+            g.DrawString(text, font, brush, rect);
+            font.Dispose();
+            g.Dispose();
+            IntPtr hbitmap = canvas.GetHbitmap();
+            targetImage.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hbitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+        }
+
+        // TODO: keydownだとタイミングが合わない
+        private void EmojiText_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            var textbox = (sender as TextBox);
+            for(int i = 0; i < images.Length; i++)
+            {
+                SetTextAsImage(textbox.Text, images[i], textColors[i]);
+            }
+        }
 
 
+        private Dictionary<string, System.Windows.Controls.Image> candidates = new Dictionary<string, System.Windows.Controls.Image>();
+
+        private void AddButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            var baseName = inputText;
+            if(baseName.Text.Length < 1)
+            {
+                return;
+            }
+
+            candidates.Clear();
+            candidatesText.Text = "";
+
+            for(int i = 0; i < images.Length; i++)
+            {
+                var name = baseName.Text + "-" + textColors[i].Color.ToString();
+                candidates.Add(name, images[i]);
+                candidatesText.Text += name;
+                candidatesText.Text += "\n";
+            }
+        }
+
+        private void UploadButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            // TODO: LocalFileUploaderから、MemoryStreamのアップロード機能を分離する。
+            var uploader = new LocalFileEmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
+            foreach((string name, System.Windows.Controls.Image image) in candidates)
+            {
+                byte[] imageArray = GetByteArray(image);
+                Task.Run(() => uploader.UploadEmojiAsync(imageArray, name));
+            }
+        }
+
+        private byte[] GetByteArray(System.Windows.Controls.Image image)
+        {
             // TODO: 
-            Byte[] imageArray;
+            byte[] imageArray;
             var encoder = new PngBitmapEncoder();
 
-            var bitmapSource = textImage.Source.Clone() as BitmapSource;
+            var bitmapSource = image.Source.Clone() as BitmapSource;
             encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
             using (var ms = new MemoryStream())
             {
@@ -47,136 +127,142 @@ namespace SlackEmojiCreator
                 //await ms.ReadAsync(imageArray, 0, (int)ms.Length);
             }
 
-            var uploader = new LocalFileEmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
-            Task.Run(() => uploader.UploadEmojiAsync(imageArray, text));
-
-            // TODO: 失敗判定をする
-            outputTextBox.Text = $"Add {text} succeeded.";
-            return;
+            return imageArray;
         }
 
-        private void UploadButton_Click(object sender, RoutedEventArgs e)
-        {
+        // private string[] currentInputFilesPath;
+
+        //// TODO: 別クラス、非同期できるようにする
+        //private void Upload_TextEmoji()
+        //{
+
+        //    var text = emojiTextBox.Text;
 
 
-            if (currentInputFilesPath == null || currentInputFilesPath.Length == 0)
-            {
-                outputTextBox.Text = "No input.";
-                return;
-            }
+        //    // TODO: 
+        //    Byte[] imageArray;
+        //    var encoder = new PngBitmapEncoder();
 
-            var defaultSetting = Properties.Settings.Default;
-            var workspaceName = defaultSetting.Workspace;
-            var emojiListToken  = defaultSetting.EmojiListToken;
-            var emojiAddToken = defaultSetting.EmojiAddToken;
+        //    var bitmapSource = textImage.Source.Clone() as BitmapSource;
+        //    encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+        //    using (var ms = new MemoryStream())
+        //    {
+        //        encoder.Save(ms);
+        //        // TODO: 非同期にする
+        //        imageArray = ms.ToArray();
+        //        //await ms.ReadAsync(imageArray, 0, (int)ms.Length);
+        //    }
 
-            // TODO: Workspace, Tokenのチェックをする
+        //    var uploader = new LocalFileEmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
+        //    Task.Run(() => uploader.UploadEmojiAsync(imageArray, text));
 
-            var emojiFetcher = new EmojiListFetcher(workspaceName, emojiListToken);
-            var task = Task.Run(() =>
-            {
-                return emojiFetcher.GetEmojiNamesAsync();
-            });
+        //    // TODO: 失敗判定をする
+        //    outputTextBox.Text = $"Add {text} succeeded.";
+        //    return;
+        //}
 
-            string[] emojiNames = task.Result;
-            Array.Sort(emojiNames);
-
-            // Upload
-            List<string> addedFiles = new List<string>(emojiNames.Length);
-            List<string> erroredFiles = new List<string>(emojiNames.Length);
-            var emojiUploader = new LocalFileEmojiUploader(workspaceName, emojiAddToken);
-            foreach (var filePath in currentInputFilesPath)
-            {
-                // TODO: すでにある絵文字の名前と被っている場合、スキップする。
-
-                try
-                {
-                    Task.Run(() => emojiUploader.UploadEmojiAsync(filePath));
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"{filePath} not added. {ex}");
-                    erroredFiles.Add(filePath);
-                    continue;
-                }
-
-                addedFiles.Add(filePath);
-            }
-
-            // change output text
-            var sb = new StringBuilder();
-            sb.Append("Added:\n");
-            foreach (var file in addedFiles)
-            {
-                sb.Append(file).Append("\n");
-            }
-
-            if (erroredFiles.Count > 0)
-            {
-                sb.Append("Not added:\n");
-                foreach (var file in erroredFiles)
-                {
-                    sb.Append(file);
-                }
-            }
-
-            outputTextBox.Text = sb.ToString();
-        }
+        //private void UploadButton_Click(object sender, RoutedEventArgs e)
+        //{
 
 
-        private void DropFiles(object sender, DragEventArgs e)
-        {
-            var files = e.Data.GetData(DataFormats.FileDrop) as string[];
-            if(files == null)
-            {
-                return;
-            }
+        //    if (currentInputFilesPath == null || currentInputFilesPath.Length == 0)
+        //    {
+        //        outputTextBox.Text = "No input.";
+        //        return;
+        //    }
 
-            currentInputFilesPath = files;
+        //    var defaultSetting = Properties.Settings.Default;
+        //    var workspaceName = defaultSetting.Workspace;
+        //    var emojiListToken  = defaultSetting.EmojiListToken;
+        //    var emojiAddToken = defaultSetting.EmojiAddToken;
 
-            var sb = new StringBuilder();
-            foreach(string file in files)
-            {
-                sb.Append(file).Append("\n");
-            }
+        //    // TODO: Workspace, Tokenのチェックをする
 
-            var textBox = sender as TextBox;
-            textBox.Text = sb.ToString();
-        }
+        //    var emojiFetcher = new EmojiListFetcher(workspaceName, emojiListToken);
+        //    var task = Task.Run(() =>
+        //    {
+        //        return emojiFetcher.GetEmojiNamesAsync();
+        //    });
 
-        private void Input_PreviewDragOver(object sender, DragEventArgs e)
-        {
-            e.Effects = DragDropEffects.Copy;
-            e.Handled = e.Data.GetDataPresent(DataFormats.FileDrop);
-        }
+        //    string[] emojiNames = task.Result;
+        //    Array.Sort(emojiNames);
 
-        private void AccountButton_Click(object sender, RoutedEventArgs e)
-        {
-            var window = new AccountWindow();
-            window.Owner = this;
-            window.ShowDialog();            
-        }
+        //    // Upload
+        //    List<string> addedFiles = new List<string>(emojiNames.Length);
+        //    List<string> erroredFiles = new List<string>(emojiNames.Length);
+        //    var emojiUploader = new LocalFileEmojiUploader(workspaceName, emojiAddToken);
+        //    foreach (var filePath in currentInputFilesPath)
+        //    {
+        //        // TODO: すでにある絵文字の名前と被っている場合、スキップする。
 
-        private void SetTextAsImage(string text, System.Windows.Controls.Image targetImage)
-        {
-            Bitmap canvas = new Bitmap((int)targetImage.Width, (int)targetImage.Height);
-            Graphics g = Graphics.FromImage(canvas);
-            Font font = new Font("MS UI Gothic", 80);
-            Rectangle rect = new Rectangle(0, 0, (int)targetImage.Width, (int)targetImage.Height);
-            g.FillRectangle(System.Drawing.Brushes.White, rect);
-            g.DrawString(text, font, System.Drawing.Brushes.Blue, rect);
-            font.Dispose();
-            g.Dispose();
-            IntPtr hbitmap = canvas.GetHbitmap();
-            targetImage.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hbitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+        //        try
+        //        {
+        //            Task.Run(() => emojiUploader.UploadEmojiAsync(filePath));
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine($"{filePath} not added. {ex}");
+        //            erroredFiles.Add(filePath);
+        //            continue;
+        //        }
 
-        }
+        //        addedFiles.Add(filePath);
+        //    }
 
-        // TODO: keydownだとタイミングが合わない
-        private void EmojText_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            var textbox = (sender as TextBox);
-            SetTextAsImage(textbox.Text, textImage);
-        }
+        //    // change output text
+        //    var sb = new StringBuilder();
+        //    sb.Append("Added:\n");
+        //    foreach (var file in addedFiles)
+        //    {
+        //        sb.Append(file).Append("\n");
+        //    }
+
+        //    if (erroredFiles.Count > 0)
+        //    {
+        //        sb.Append("Not added:\n");
+        //        foreach (var file in erroredFiles)
+        //        {
+        //            sb.Append(file);
+        //        }
+        //    }
+
+        //    outputTextBox.Text = sb.ToString();
+        //}
+
+
+        //private void DropFiles(object sender, DragEventArgs e)
+        //{
+        //    var files = e.Data.GetData(DataFormats.FileDrop) as string[];
+        //    if(files == null)
+        //    {
+        //        return;
+        //    }
+
+        //    currentInputFilesPath = files;
+
+        //    var sb = new StringBuilder();
+        //    foreach(string file in files)
+        //    {
+        //        sb.Append(file).Append("\n");
+        //    }
+
+        //    var textBox = sender as TextBox;
+        //    textBox.Text = sb.ToString();
+        //}
+
+        //private void Input_PreviewDragOver(object sender, DragEventArgs e)
+        //{
+        //    e.Effects = DragDropEffects.Copy;
+        //    e.Handled = e.Data.GetDataPresent(DataFormats.FileDrop);
+        //}
+
+        //private void AccountButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var window = new AccountWindow();
+        //    window.Owner = this;
+        //    window.ShowDialog();            
+        //}
+
+
     }
 }

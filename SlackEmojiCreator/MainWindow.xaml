@@ -25,10 +25,12 @@
 
             <!--<Viewbox Grid.Row="0">-->
             <TextBox
+                x:Name="inputText"
                 HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Top"
                 AcceptsReturn="True"
                 FontSize="100"
+                KeyDown="EmojiText_KeyDown"
                 Text="バイブス"
                 TextAlignment="Center"
                 TextBlock.LineHeight="100"
@@ -49,6 +51,7 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
+
             <Image
                 x:Name="image1"
                 Grid.Row="0"
@@ -67,11 +70,29 @@
                 Grid.Column="1" />
 
             <Button
-                x:Name="addButton"
                 Grid.Row="2"
                 Grid.ColumnSpan="2"
                 Margin="5"
+                Click="AddButton_Clicked"
                 Content="Add" />
+        </Grid>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="8*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+
+            <TextBox
+                x:Name="candidatesText"
+                Grid.Row="0"
+                Text="files" />
+
+            <Button
+                Grid.Row="1"
+                Margin="5"
+                Click="UploadButton_Clicked"
+                Content="Upload" />
         </Grid>
 
         <!--<Button
