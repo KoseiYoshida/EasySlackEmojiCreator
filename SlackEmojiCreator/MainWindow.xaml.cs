@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -40,13 +41,42 @@ namespace SlackEmojiCreator
                 new SolidBrush(System.Drawing.Color.Blue),
             };
 
+            // 参考:https://w3g.jp/sample/css/font-family
+            fontFamilies = new string[3]
+            {
+                "sans-serif",
+                "serif",
+                "monospace",
+            };
+
+            foreach(var f in fontFamilies)
+            {
+                fontFamilyComboBox.Items.Add(f);
+            }
+
+            fontFamilyComboBox.SelectedIndex = 0;
+            
+            //InstalledFontCollection installedFontCollection = new InstalledFontCollection();
+
+            //// Get the array of FontFamily objects.
+            //var fam = installedFontCollection.Families;
+
+            //// The loop below creates a large string that is a comma-separated
+            //// list of all font family names.
+
+            //foreach(var f in fam)
+            //{
+            //    Console.WriteLine(f);
+            //}
         }
 
         private System.Windows.Controls.Image[] images;
 
         private readonly SolidBrush[] textColors;
 
-        private void SetTextAsImage(string text, System.Windows.Controls.Image targetImage, Brush brush)
+        private readonly string[] fontFamilies;
+
+        private void SetTextAsImage(string text, System.Windows.Controls.Image targetImage, Brush brush, string fontFamily)
         {
             // TODO: ソースがなく、widthやheightがautoのときの取得方法を調べる
             //var width = (int)targetImage.ActualWidth
@@ -56,7 +86,7 @@ namespace SlackEmojiCreator
 
             Bitmap canvas = new Bitmap(width, height);
             Graphics g = Graphics.FromImage(canvas);
-            Font font = new Font("MS UI Gothic", 40);
+            Font font = new Font(fontFamily, 40);
             Rectangle rect = new Rectangle(0, 0, width, height);
             g.FillRectangle(System.Drawing.Brushes.White, rect);
             g.DrawString(text, font, brush, rect);
@@ -73,7 +103,7 @@ namespace SlackEmojiCreator
             var textbox = (sender as TextBox);
             for(int i = 0; i < images.Length; i++)
             {
-                SetTextAsImage(textbox.Text, images[i], textColors[i]);
+                SetTextAsImage(textbox.Text, images[i], textColors[i], fontFamilies[fontFamilyComboBox.SelectedIndex]);
             }
         }
 
@@ -93,7 +123,7 @@ namespace SlackEmojiCreator
 
             for(int i = 0; i < images.Length; i++)
             {
-                var name = baseName.Text + "-" + textColors[i].Color.ToString();
+                var name = baseName.Text + "-" + textColors[i].Color.Name.ToString();
                 candidates.Add(name, images[i]);
                 candidatesText.Text += name;
                 candidatesText.Text += "\n";
@@ -128,6 +158,12 @@ namespace SlackEmojiCreator
             }
 
             return imageArray;
+        }
+
+        private void ClearButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            candidates.Clear();
+            candidatesText.Text = "files";
         }
 
         // private string[] currentInputFilesPath;
