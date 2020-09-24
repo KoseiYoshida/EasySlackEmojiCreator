@@ -44,9 +44,9 @@ namespace SlackEmojiCreator
             // 参考:https://w3g.jp/sample/css/font-family
             fontFamilies = new string[3]
             {
-                "sans-serif",
-                "serif",
-                "monospace",
+                "Sans-serif",
+                "Impact",
+                "メイリオ",
             };
 
             foreach(var f in fontFamilies)
@@ -177,104 +177,6 @@ namespace SlackEmojiCreator
             UpdateTextImages(inputText.Text);
         }
 
-        // private string[] currentInputFilesPath;
-
-        //// TODO: 別クラス、非同期できるようにする
-        //private void Upload_TextEmoji()
-        //{
-
-        //    var text = emojiTextBox.Text;
-
-
-        //    // TODO: 
-        //    Byte[] imageArray;
-        //    var encoder = new PngBitmapEncoder();
-
-        //    var bitmapSource = textImage.Source.Clone() as BitmapSource;
-        //    encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-        //    using (var ms = new MemoryStream())
-        //    {
-        //        encoder.Save(ms);
-        //        // TODO: 非同期にする
-        //        imageArray = ms.ToArray();
-        //        //await ms.ReadAsync(imageArray, 0, (int)ms.Length);
-        //    }
-
-        //    var uploader = new LocalFileEmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
-        //    Task.Run(() => uploader.UploadEmojiAsync(imageArray, text));
-
-        //    // TODO: 失敗判定をする
-        //    outputTextBox.Text = $"Add {text} succeeded.";
-        //    return;
-        //}
-
-        //private void UploadButton_Click(object sender, RoutedEventArgs e)
-        //{
-
-
-        //    if (currentInputFilesPath == null || currentInputFilesPath.Length == 0)
-        //    {
-        //        outputTextBox.Text = "No input.";
-        //        return;
-        //    }
-
-        //    var defaultSetting = Properties.Settings.Default;
-        //    var workspaceName = defaultSetting.Workspace;
-        //    var emojiListToken  = defaultSetting.EmojiListToken;
-        //    var emojiAddToken = defaultSetting.EmojiAddToken;
-
-        //    // TODO: Workspace, Tokenのチェックをする
-
-        //    var emojiFetcher = new EmojiListFetcher(workspaceName, emojiListToken);
-        //    var task = Task.Run(() =>
-        //    {
-        //        return emojiFetcher.GetEmojiNamesAsync();
-        //    });
-
-        //    string[] emojiNames = task.Result;
-        //    Array.Sort(emojiNames);
-
-        //    // Upload
-        //    List<string> addedFiles = new List<string>(emojiNames.Length);
-        //    List<string> erroredFiles = new List<string>(emojiNames.Length);
-        //    var emojiUploader = new LocalFileEmojiUploader(workspaceName, emojiAddToken);
-        //    foreach (var filePath in currentInputFilesPath)
-        //    {
-        //        // TODO: すでにある絵文字の名前と被っている場合、スキップする。
-
-        //        try
-        //        {
-        //            Task.Run(() => emojiUploader.UploadEmojiAsync(filePath));
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine($"{filePath} not added. {ex}");
-        //            erroredFiles.Add(filePath);
-        //            continue;
-        //        }
-
-        //        addedFiles.Add(filePath);
-        //    }
-
-        //    // change output text
-        //    var sb = new StringBuilder();
-        //    sb.Append("Added:\n");
-        //    foreach (var file in addedFiles)
-        //    {
-        //        sb.Append(file).Append("\n");
-        //    }
-
-        //    if (erroredFiles.Count > 0)
-        //    {
-        //        sb.Append("Not added:\n");
-        //        foreach (var file in erroredFiles)
-        //        {
-        //            sb.Append(file);
-        //        }
-        //    }
-
-        //    outputTextBox.Text = sb.ToString();
-        //}
 
 
         //private void DropFiles(object sender, DragEventArgs e)
@@ -303,12 +205,12 @@ namespace SlackEmojiCreator
         //    e.Handled = e.Data.GetDataPresent(DataFormats.FileDrop);
         //}
 
-        //private void AccountButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var window = new AccountWindow();
-        //    window.Owner = this;
-        //    window.ShowDialog();            
-        //}
+        private void AccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new AccountWindow();
+            window.Owner = this;
+            window.ShowDialog();
+        }
 
 
     }

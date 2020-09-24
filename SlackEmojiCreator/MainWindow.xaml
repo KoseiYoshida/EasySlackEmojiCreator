@@ -47,6 +47,12 @@
                     Margin="10"
                     SelectionChanged="FontFamilyComboBox_SelectionChanged" />
             </StackPanel>
+
+            <Button
+                Grid.Row="2"
+                Margin="5"
+                Click="AccountButton_Click"
+                Content="Account" />
         </Grid>
 
         <Grid Grid.Column="1">
