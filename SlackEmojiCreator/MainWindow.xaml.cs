@@ -97,14 +97,19 @@ namespace SlackEmojiCreator
 
         }
 
+        private void UpdateTextImages(string text)
+        {
+            for (int i = 0; i < images.Length; i++)
+            {
+                SetTextAsImage(text, images[i], textColors[i], fontFamilies[fontFamilyComboBox.SelectedIndex]);
+            }
+        }
+
         // TODO: keydownだとタイミングが合わない
         private void EmojiText_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             var textbox = (sender as TextBox);
-            for(int i = 0; i < images.Length; i++)
-            {
-                SetTextAsImage(textbox.Text, images[i], textColors[i], fontFamilies[fontFamilyComboBox.SelectedIndex]);
-            }
+            UpdateTextImages(textbox.Text);
         }
 
 
@@ -164,6 +169,12 @@ namespace SlackEmojiCreator
         {
             candidates.Clear();
             candidatesText.Text = "files";
+        }
+
+
+        private void FontFamilyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateTextImages(inputText.Text);
         }
 
         // private string[] currentInputFilesPath;

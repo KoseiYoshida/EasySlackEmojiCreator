@@ -44,7 +44,8 @@
                 <ComboBox
                     x:Name="fontFamilyComboBox"
                     Height="40"
-                    Margin="10" />
+                    Margin="10"
+                    SelectionChanged="FontFamilyComboBox_SelectionChanged" />
             </StackPanel>
         </Grid>
 
