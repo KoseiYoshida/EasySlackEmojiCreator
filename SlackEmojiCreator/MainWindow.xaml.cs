@@ -54,20 +54,7 @@ namespace SlackEmojiCreator
                 fontFamilyComboBox.Items.Add(f);
             }
 
-            fontFamilyComboBox.SelectedIndex = 0;
-            
-            //InstalledFontCollection installedFontCollection = new InstalledFontCollection();
-
-            //// Get the array of FontFamily objects.
-            //var fam = installedFontCollection.Families;
-
-            //// The loop below creates a large string that is a comma-separated
-            //// list of all font family names.
-
-            //foreach(var f in fam)
-            //{
-            //    Console.WriteLine(f);
-            //}
+            fontFamilyComboBox.SelectedIndex = 0;          
         }
 
         private System.Windows.Controls.Image[] images;
