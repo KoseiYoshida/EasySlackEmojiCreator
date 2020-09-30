@@ -8,7 +8,6 @@
     Title="MainWindow"
     Width="800"
     Height="450"
-    ContentRendered="Window_ContentRendered"
     mc:Ignorable="d">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -24,21 +23,19 @@
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
 
-            <!--  ViewboxをそのままCaptureするとアスペクト比が変動するので、ダミーのTextBlockで囲む  -->
-            <TextBlock x:Name="inputTextParent" Grid.Row="0">
-                <Viewbox HorizontalAlignment="Center" VerticalAlignment="Top">
-                    <!--  &#xA;で改行  -->
-                    <TextBox
-                        x:Name="inputText"
-                        AcceptsReturn="True"
-                        BorderThickness="0"
-                        FontSize="100"
-                        KeyDown="EmojiText_KeyDown"
-                        Text="あ&#xA;　 う"
-                        TextBlock.LineHeight="100"
-                        TextBlock.LineStackingStrategy="BlockLineHeight" />
-                </Viewbox>
-            </TextBlock>
+
+            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Top">
+                <!--  &#xA;で改行  -->
+                <TextBox
+                    x:Name="inputText"
+                    AcceptsReturn="True"
+                    BorderThickness="0"
+                    FontSize="100"
+                    KeyDown="EmojiText_KeyDown"
+                    Text="あ&#xA;　 う"
+                    TextBlock.LineHeight="100"
+                    TextBlock.LineStackingStrategy="BlockLineHeight" />
+            </Viewbox>
 
 
 
@@ -69,40 +66,43 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
+            <!--  ViewboxをそのままCaptureするとアスペクト比が変動するので、ダミーのTextBlockで囲む  -->
+            <TextBlock
+                x:Name="outputTextParent1"
+                Grid.Row="0"
+                Grid.Column="0">
+                <Viewbox>
+                    <TextBlock x:Name="outputText1" />
+                </Viewbox>
+            </TextBlock>
 
-            <!--<Image
-                x:Name="image1"
+            <TextBlock
+                x:Name="outputTextParent2"
                 Grid.Row="0"
-                Grid.Column="0" />
-            <Image
-                x:Name="image2"
-                Grid.Row="0"
-                Grid.Column="1" />
-            <Image
-                x:Name="image3"
-                Grid.Row="1"
-                Grid.Column="0" />
-            <Image
-                x:Name="image4"
-                Grid.Row="1"
-                Grid.Column="1" />-->
+                Grid.Column="1">
+                <Viewbox>
+                    <TextBlock x:Name="outputText2" />
+                </Viewbox>
+            </TextBlock>
 
-            <TextBox
-                x:Name="outputText1"
-                Grid.Row="0"
-                Grid.Column="0" />
-            <TextBox
-                x:Name="outputText2"
-                Grid.Row="0"
-                Grid.Column="1" />
-            <TextBox
-                x:Name="outputText3"
+            <TextBlock
+                x:Name="outputTextParent3"
                 Grid.Row="1"
-                Grid.Column="0" />
-            <TextBox
-                x:Name="outputText4"
+                Grid.Column="0">
+                <Viewbox>
+                    <TextBlock x:Name="outputText3" />
+                </Viewbox>
+            </TextBlock>
+
+            <TextBlock
+                x:Name="outputTextParent4"
                 Grid.Row="1"
-                Grid.Column="1" />
+                Grid.Column="1">
+                <Viewbox>
+                    <TextBlock x:Name="outputText4" />
+                </Viewbox>
+            </TextBlock>
+
 
             <Button
                 Grid.Row="2"
@@ -137,47 +137,5 @@
                 Content="Upload" />
         </Grid>
 
-        <!--<Button
-            Width="300"
-            Height="50"
-            Margin="10"
-            VerticalAlignment="Top"
-            Click="AccountButton_Click"
-            Content="Account" />
-        <Button
-            Width="300"
-            Height="50"
-            Margin="0,100,0,0"
-            VerticalAlignment="Top"
-            Click="UploadButton_Click"
-            Content="Upload" />
-        <Image
-            x:Name="textImage"
-            Width="250"
-            Height="250"
-            VerticalAlignment="Bottom" />
-        <TextBox
-            x:Name="inputTextBox"
-            Width="200"
-            Height="100"
-            Margin="5"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            AllowDrop="True"
-            Drop="DropFiles"
-            PreviewDragOver="Input_PreviewDragOver"
-            Text="Please drag emoji images." />
-        <TextBox
-            x:Name="outputTextBox"
-            Width="200"
-            Margin="5"
-            HorizontalAlignment="Right" />
-        <TextBox
-            x:Name="emojiTextBox"
-            Width="200"
-            Height="30"
-            HorizontalAlignment="Left"
-            KeyDown="EmojText_KeyDown"
-            Text="Enter" />-->
     </Grid>
 </Window>

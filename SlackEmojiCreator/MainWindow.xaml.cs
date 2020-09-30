@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,15 +26,15 @@ namespace SlackEmojiCreator
         {
             InitializeComponent();
 
-            textColors = new SolidBrush[4]
+            textColors = new SolidColorBrush[4]
             {
-                new SolidBrush(System.Drawing.Color.Black),
-                new SolidBrush(System.Drawing.Color.Red),
-                new SolidBrush(System.Drawing.Color.Green),
-                new SolidBrush(System.Drawing.Color.Blue),
+                new SolidColorBrush(Colors.Black),
+                new SolidColorBrush(Colors.Red),
+                new SolidColorBrush(Colors.Green),
+                new SolidColorBrush(Colors.Blue),
             };
 
-            outputTextBoxes = new TextBox[4]
+            outputTextBoxes = new TextBlock[4]
             {
                 outputText1,
                 outputText2,
@@ -55,24 +56,29 @@ namespace SlackEmojiCreator
             }
 
             fontFamilyComboBox.SelectedIndex = 0;
-
             
         }
 
-        //private void Window_ContentRendered(object sender, EventArgs e)
-        //{
-        //    // Windowが表示されるまで待機したいので、タイマーで1秒後に処理を実行
-        //    var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-        //    timer.Start();
-        //    timer.Tick += (s, args) =>
-        //    {
-        //        // タイマーの停止
-        //        timer.Stop();
 
-        //        // キャプチャ開始
-        //        CaptureControl(block);
-        //    };
-        //}
+        private readonly TextBlock[] outputTextBoxes;
+
+        private readonly SolidColorBrush[] textColors;
+
+        private readonly string[] fontFamilies;
+
+
+        private void UpdateOutputTexts(string sourceText)
+        {
+            for(int i = 0; i < outputTextBoxes.Length; i++)
+            {
+                var textBox = outputTextBoxes[i];
+                textBox.Text = sourceText;
+                var fontfamilyString = fontFamilies[fontFamilyComboBox.SelectedIndex];
+                textBox.FontFamily = new System.Windows.Media.FontFamily(fontfamilyString);
+                textBox.Foreground = textColors[i];
+            }
+        }
+
 
         private void CaptureControl(Visual targetControl)
         {
@@ -81,85 +87,28 @@ namespace SlackEmojiCreator
             var height = (targetControl as FrameworkElement).ActualHeight;
             Rect targetRect = new Rect(leftTopCorner.X, leftTopCorner.Y, width, height);
             BitmapSource bitmapSource;
-            using(var screenBitmap = new Bitmap((int)targetRect.Width, (int)targetRect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+            using (var screenBitmap = new Bitmap((int)targetRect.Width, (int)targetRect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
             {
-                using(var bitmapGraphics = Graphics.FromImage(screenBitmap))
+                using (var bitmapGraphics = Graphics.FromImage(screenBitmap))
                 {
                     bitmapGraphics.CopyFromScreen((int)targetRect.X, (int)targetRect.Y, 0, 0, screenBitmap.Size);
                     bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(screenBitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
                 }
             }
 
-            using(var fStream = new FileStream("result.png", FileMode.Create))
+            using (var fStream = new FileStream("result.png", FileMode.Create))
             {
                 PngBitmapEncoder encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
                 encoder.Save(fStream);
-                Console.WriteLine($"saved");
             }
         }
 
-        private readonly TextBox[] outputTextBoxes;
-
-        private readonly SolidBrush[] textColors;
-
-        private readonly string[] fontFamilies;
-
-        //private void SetTextAsImage(string text, System.Windows.Controls.Image targetImage, Brush brush, string fontFamily)
-        //{
-        //    // TODO: ソースがなく、widthやheightがautoのときの取得方法を調べる
-        //    //var width = (int)targetImage.ActualWidth
-        //    //var height = (int)targetImage.ActualHeight;
-        //    var width = 400;
-        //    var height = 400;
-
-        //    string[] lines = text.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-        //    int maxCount = lines.Length;
-        //    for (int i = 0; i < lines.Length; i++)
-        //    {
-        //        var len = lines[i].Length;
-        //        if (len > maxCount)
-        //            maxCount = len;
-        //    }
-
-        //    Bitmap canvas = new Bitmap(width, height);
-        //    Graphics g = Graphics.FromImage(canvas);
-        //    float size = width / maxCount;
-        //    Font font = new Font(fontFamily, size);
-        //    // TODO: StringFormatの工夫で対処できるかも？
-        //    var sf = new StringFormat(StringFormatFlags.NoClip);
-        //    g.DrawString(text, font, brush, 0, 0, sf);
-
-        //    font.Dispose();
-        //    g.Dispose();
-
-        //    IntPtr hbitmap = canvas.GetHbitmap();
-        //    targetImage.Source = Imaging.CreateBitmapSourceFromHBitmap(hbitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
-        //}
-
-        //private void UpdateTextImages(string text)
-        //{
-        //    for (int i = 0; i < images.Length; i++)
-        //    {
-        //        SetTextAsImage(text, images[i], textColors[i], fontFamilies[fontFamilyComboBox.SelectedIndex]);
-        //    }
-        //}
-
         // TODO: keydownだとタイミングが合わない
-        
-        
-        private void UpdateTexts()
-        {
-
-        }
-
         private void EmojiText_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             var textbox = (sender as TextBox);
-            // TODO: 行数に合わせて、空白文字で列を調整する？
-            //UpdateTextImages(textbox.Text);
-            
+            UpdateOutputTexts(textbox.Text);
         }
 
 
@@ -224,36 +173,9 @@ namespace SlackEmojiCreator
 
         private void FontFamilyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // UpdateTextImages(inputText.Text);
+            UpdateOutputTexts(inputText.Text);
         }
 
-
-
-        //private void DropFiles(object sender, DragEventArgs e)
-        //{
-        //    var files = e.Data.GetData(DataFormats.FileDrop) as string[];
-        //    if(files == null)
-        //    {
-        //        return;
-        //    }
-
-        //    currentInputFilesPath = files;
-
-        //    var sb = new StringBuilder();
-        //    foreach(string file in files)
-        //    {
-        //        sb.Append(file).Append("\n");
-        //    }
-
-        //    var textBox = sender as TextBox;
-        //    textBox.Text = sb.ToString();
-        //}
-
-        //private void Input_PreviewDragOver(object sender, DragEventArgs e)
-        //{
-        //    e.Effects = DragDropEffects.Copy;
-        //    e.Handled = e.Data.GetDataPresent(DataFormats.FileDrop);
-        //}
 
         private void AccountButton_Click(object sender, RoutedEventArgs e)
         {
