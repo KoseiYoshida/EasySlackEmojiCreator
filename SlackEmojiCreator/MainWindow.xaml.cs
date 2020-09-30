@@ -25,14 +25,6 @@ namespace SlackEmojiCreator
         {
             InitializeComponent();
 
-            images = new System.Windows.Controls.Image[4]
-            {
-                image1,
-                image2,
-                image3,
-                image4
-            };
-
             textColors = new SolidBrush[4]
             {
                 new SolidBrush(System.Drawing.Color.Black),
@@ -41,12 +33,20 @@ namespace SlackEmojiCreator
                 new SolidBrush(System.Drawing.Color.Blue),
             };
 
+            outputTextBoxes = new TextBox[4]
+            {
+                outputText1,
+                outputText2,
+                outputText3,
+                outputText4,
+            };
+
             // 参考:https://w3g.jp/sample/css/font-family
             fontFamilies = new string[3]
             {
                 "Sans-serif",
                 "Impact",
-                "メイリオ",
+                "Monospace",
             };
 
             foreach(var f in fontFamilies)
@@ -54,49 +54,112 @@ namespace SlackEmojiCreator
                 fontFamilyComboBox.Items.Add(f);
             }
 
-            fontFamilyComboBox.SelectedIndex = 0;          
+            fontFamilyComboBox.SelectedIndex = 0;
+
+            
         }
 
-        private System.Windows.Controls.Image[] images;
+        //private void Window_ContentRendered(object sender, EventArgs e)
+        //{
+        //    // Windowが表示されるまで待機したいので、タイマーで1秒後に処理を実行
+        //    var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        //    timer.Start();
+        //    timer.Tick += (s, args) =>
+        //    {
+        //        // タイマーの停止
+        //        timer.Stop();
+
+        //        // キャプチャ開始
+        //        CaptureControl(block);
+        //    };
+        //}
+
+        private void CaptureControl(Visual targetControl)
+        {
+            System.Windows.Point leftTopCorner = targetControl.PointToScreen(new System.Windows.Point(0f, 0f));
+            var width = (targetControl as FrameworkElement).ActualWidth;
+            var height = (targetControl as FrameworkElement).ActualHeight;
+            Rect targetRect = new Rect(leftTopCorner.X, leftTopCorner.Y, width, height);
+            BitmapSource bitmapSource;
+            using(var screenBitmap = new Bitmap((int)targetRect.Width, (int)targetRect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+            {
+                using(var bitmapGraphics = Graphics.FromImage(screenBitmap))
+                {
+                    bitmapGraphics.CopyFromScreen((int)targetRect.X, (int)targetRect.Y, 0, 0, screenBitmap.Size);
+                    bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(screenBitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                }
+            }
+
+            using(var fStream = new FileStream("result.png", FileMode.Create))
+            {
+                PngBitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+                encoder.Save(fStream);
+                Console.WriteLine($"saved");
+            }
+        }
+
+        private readonly TextBox[] outputTextBoxes;
 
         private readonly SolidBrush[] textColors;
 
         private readonly string[] fontFamilies;
 
-        private void SetTextAsImage(string text, System.Windows.Controls.Image targetImage, Brush brush, string fontFamily)
-        {
-            // TODO: ソースがなく、widthやheightがautoのときの取得方法を調べる
-            //var width = (int)targetImage.ActualWidth
-            //var height = (int)targetImage.ActualHeight;
-            var width = 100;
-            var height = 100;
+        //private void SetTextAsImage(string text, System.Windows.Controls.Image targetImage, Brush brush, string fontFamily)
+        //{
+        //    // TODO: ソースがなく、widthやheightがautoのときの取得方法を調べる
+        //    //var width = (int)targetImage.ActualWidth
+        //    //var height = (int)targetImage.ActualHeight;
+        //    var width = 400;
+        //    var height = 400;
 
-            Bitmap canvas = new Bitmap(width, height);
-            Graphics g = Graphics.FromImage(canvas);
-            Font font = new Font(fontFamily, 40);
-            Rectangle rect = new Rectangle(0, 0, width, height);
-            g.FillRectangle(System.Drawing.Brushes.White, rect);
-            g.DrawString(text, font, brush, rect);
-            font.Dispose();
-            g.Dispose();
-            IntPtr hbitmap = canvas.GetHbitmap();
-            targetImage.Source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hbitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+        //    string[] lines = text.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+        //    int maxCount = lines.Length;
+        //    for (int i = 0; i < lines.Length; i++)
+        //    {
+        //        var len = lines[i].Length;
+        //        if (len > maxCount)
+        //            maxCount = len;
+        //    }
 
-        }
+        //    Bitmap canvas = new Bitmap(width, height);
+        //    Graphics g = Graphics.FromImage(canvas);
+        //    float size = width / maxCount;
+        //    Font font = new Font(fontFamily, size);
+        //    // TODO: StringFormatの工夫で対処できるかも？
+        //    var sf = new StringFormat(StringFormatFlags.NoClip);
+        //    g.DrawString(text, font, brush, 0, 0, sf);
 
-        private void UpdateTextImages(string text)
-        {
-            for (int i = 0; i < images.Length; i++)
-            {
-                SetTextAsImage(text, images[i], textColors[i], fontFamilies[fontFamilyComboBox.SelectedIndex]);
-            }
-        }
+        //    font.Dispose();
+        //    g.Dispose();
+
+        //    IntPtr hbitmap = canvas.GetHbitmap();
+        //    targetImage.Source = Imaging.CreateBitmapSourceFromHBitmap(hbitmap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+        //}
+
+        //private void UpdateTextImages(string text)
+        //{
+        //    for (int i = 0; i < images.Length; i++)
+        //    {
+        //        SetTextAsImage(text, images[i], textColors[i], fontFamilies[fontFamilyComboBox.SelectedIndex]);
+        //    }
+        //}
 
         // TODO: keydownだとタイミングが合わない
+        
+        
+        private void UpdateTexts()
+        {
+
+        }
+
         private void EmojiText_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             var textbox = (sender as TextBox);
-            UpdateTextImages(textbox.Text);
+            // TODO: 行数に合わせて、空白文字で列を調整する？
+            //UpdateTextImages(textbox.Text);
+            
         }
 
 
@@ -105,7 +168,7 @@ namespace SlackEmojiCreator
         private void AddButton_Clicked(object sender, RoutedEventArgs e)
         {
             var baseName = inputText;
-            if(baseName.Text.Length < 1)
+            if (baseName.Text.Length < 1)
             {
                 return;
             }
@@ -113,13 +176,13 @@ namespace SlackEmojiCreator
             candidates.Clear();
             candidatesText.Text = "";
 
-            for(int i = 0; i < images.Length; i++)
-            {
-                var name = baseName.Text + "-" + textColors[i].Color.Name.ToString();
-                candidates.Add(name, images[i]);
-                candidatesText.Text += name;
-                candidatesText.Text += "\n";
-            }
+            //for (int i = 0; i < images.Length; i++)
+            //{
+            //    var name = baseName.Text + "-" + textColors[i].Color.Name.ToString();
+            //    candidates.Add(name, images[i]);
+            //    candidatesText.Text += name;
+            //    candidatesText.Text += "\n";
+            //}
         }
 
         private void UploadButton_Clicked(object sender, RoutedEventArgs e)
@@ -161,7 +224,7 @@ namespace SlackEmojiCreator
 
         private void FontFamilyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateTextImages(inputText.Text);
+            // UpdateTextImages(inputText.Text);
         }
 
 

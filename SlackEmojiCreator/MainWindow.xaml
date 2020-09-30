@@ -8,6 +8,7 @@
     Title="MainWindow"
     Width="800"
     Height="450"
+    ContentRendered="Window_ContentRendered"
     mc:Ignorable="d">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -23,21 +24,23 @@
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
 
-            <!--<Viewbox Grid.Row="0">-->
-            <TextBox
-                x:Name="inputText"
-                Grid.Row="0"
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Top"
-                AcceptsReturn="True"
-                FontSize="100"
-                KeyDown="EmojiText_KeyDown"
-                Text="バイブス"
-                TextAlignment="Center"
-                TextBlock.LineHeight="100"
-                TextBlock.LineStackingStrategy="BlockLineHeight"
-                TextWrapping="Wrap" />
-            <!--</Viewbox>-->
+            <!--  ViewboxをそのままCaptureするとアスペクト比が変動するので、ダミーのTextBlockで囲む  -->
+            <TextBlock x:Name="inputTextParent" Grid.Row="0">
+                <Viewbox HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <!--  &#xA;で改行  -->
+                    <TextBox
+                        x:Name="inputText"
+                        AcceptsReturn="True"
+                        BorderThickness="0"
+                        FontSize="100"
+                        KeyDown="EmojiText_KeyDown"
+                        Text="あ&#xA;　 う"
+                        TextBlock.LineHeight="100"
+                        TextBlock.LineStackingStrategy="BlockLineHeight" />
+                </Viewbox>
+            </TextBlock>
+
+
 
             <StackPanel Grid.Row="1">
                 <Label Margin="10" Content="Font Family" />
@@ -67,7 +70,7 @@
             </Grid.ColumnDefinitions>
 
 
-            <Image
+            <!--<Image
                 x:Name="image1"
                 Grid.Row="0"
                 Grid.Column="0" />
@@ -81,6 +84,23 @@
                 Grid.Column="0" />
             <Image
                 x:Name="image4"
+                Grid.Row="1"
+                Grid.Column="1" />-->
+
+            <TextBox
+                x:Name="outputText1"
+                Grid.Row="0"
+                Grid.Column="0" />
+            <TextBox
+                x:Name="outputText2"
+                Grid.Row="0"
+                Grid.Column="1" />
+            <TextBox
+                x:Name="outputText3"
+                Grid.Row="1"
+                Grid.Column="0" />
+            <TextBox
+                x:Name="outputText4"
                 Grid.Row="1"
                 Grid.Column="1" />
 
@@ -159,6 +179,5 @@
             HorizontalAlignment="Left"
             KeyDown="EmojText_KeyDown"
             Text="Enter" />-->
-
     </Grid>
 </Window>
