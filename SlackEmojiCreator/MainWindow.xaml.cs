@@ -109,18 +109,6 @@ namespace SlackEmojiCreator
             }
 
             return bitmapSource;
-
-            //var mStream = new MemoryStream()
-            //PngBitmapEncoder encoder = new PngBitmapEncoder();
-            //encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-            //encoder.Save(mStream);
-
-            //using (var fStream = new FileStream("result.png", FileMode.Create))
-            //{
-            //    PngBitmapEncoder encoder = new PngBitmapEncoder();
-            //    encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-            //    encoder.Save(fStream);
-            //}
         }
 
 
