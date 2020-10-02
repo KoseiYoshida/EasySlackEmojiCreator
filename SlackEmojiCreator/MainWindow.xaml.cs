@@ -123,12 +123,6 @@ namespace SlackEmojiCreator
             //}
         }
 
-        // TODO: keydownだとタイミングが合わない
-        private void EmojiText_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            var textbox = (sender as TextBox);
-            UpdateOutputTexts(textbox.Text);
-        }
 
 
         private Dictionary<string, BitmapSource> candidates = new Dictionary<string, BitmapSource>();
@@ -212,6 +206,10 @@ namespace SlackEmojiCreator
             window.ShowDialog();
         }
 
-
+        private void inputText_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            var textbox = (sender as TextBox);
+            UpdateOutputTexts(textbox.Text);
+        }
     }
 }

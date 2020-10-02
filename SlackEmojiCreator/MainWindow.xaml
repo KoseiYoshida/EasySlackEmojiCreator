@@ -31,7 +31,7 @@
                     AcceptsReturn="True"
                     BorderThickness="0"
                     FontSize="100"
-                    KeyDown="EmojiText_KeyDown"
+                    PreviewKeyUp="inputText_PreviewKeyUp"
                     Text="text"
                     TextBlock.LineHeight="100"
                     TextBlock.LineStackingStrategy="BlockLineHeight" />
