@@ -32,7 +32,7 @@
                     BorderThickness="0"
                     FontSize="100"
                     KeyDown="EmojiText_KeyDown"
-                    Text="あ&#xA;　 う"
+                    Text="text"
                     TextBlock.LineHeight="100"
                     TextBlock.LineStackingStrategy="BlockLineHeight" />
             </Viewbox>
