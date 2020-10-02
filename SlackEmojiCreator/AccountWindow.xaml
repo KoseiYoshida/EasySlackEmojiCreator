@@ -22,6 +22,10 @@
                 x:Name="SaveButton"
                 Click="SaveButton_Click"
                 Content="保存" />
+            <TextBlock
+                x:Name="resultTextBlock"
+                Width="300"
+                Margin="5,10" />
         </StackPanel>
     </Grid>
 </Window>
