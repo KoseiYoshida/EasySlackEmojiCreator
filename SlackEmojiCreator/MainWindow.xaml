@@ -67,6 +67,7 @@
             </Grid.ColumnDefinitions>
 
             <!--  ViewboxをそのままCaptureするとアスペクト比が変動するので、ダミーのTextBlockで囲む  -->
+
             <TextBlock
                 x:Name="outputTextParent1"
                 Grid.Row="0"
@@ -75,6 +76,7 @@
                     <TextBlock x:Name="outputText1" />
                 </Viewbox>
             </TextBlock>
+
 
             <TextBlock
                 x:Name="outputTextParent2"

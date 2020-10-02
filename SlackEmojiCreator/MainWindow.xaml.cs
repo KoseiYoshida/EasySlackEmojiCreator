@@ -26,20 +26,28 @@ namespace SlackEmojiCreator
         {
             InitializeComponent();
 
-            textColors = new SolidColorBrush[4]
+            textColors = new SolidBrush[4]
             {
-                new SolidColorBrush(Colors.Black),
-                new SolidColorBrush(Colors.Red),
-                new SolidColorBrush(Colors.Green),
-                new SolidColorBrush(Colors.Blue),
+                new SolidBrush(System.Drawing.Color.Black),
+                new SolidBrush(System.Drawing.Color.Red),
+                new SolidBrush(System.Drawing.Color.Green),
+                new SolidBrush(System.Drawing.Color.Blue),
             };
 
-            outputTextBoxes = new TextBlock[4]
+            outputTextBlocks = new TextBlock[4]
             {
                 outputText1,
                 outputText2,
                 outputText3,
                 outputText4,
+            };
+
+            outputTextBoxParents = new TextBlock[4]
+            {
+                outputTextParent1,
+                outputTextParent2,
+                outputTextParent3,
+                outputTextParent4,
             };
 
             // 参考:https://w3g.jp/sample/css/font-family
@@ -60,27 +68,31 @@ namespace SlackEmojiCreator
         }
 
 
-        private readonly TextBlock[] outputTextBoxes;
+        private readonly TextBlock[] outputTextBlocks;
+        private readonly TextBlock[] outputTextBoxParents;
 
-        private readonly SolidColorBrush[] textColors;
+        private readonly SolidBrush[] textColors;
 
         private readonly string[] fontFamilies;
 
 
         private void UpdateOutputTexts(string sourceText)
         {
-            for(int i = 0; i < outputTextBoxes.Length; i++)
+            for(int i = 0; i < outputTextBlocks.Length; i++)
             {
-                var textBox = outputTextBoxes[i];
+                var textBox = outputTextBlocks[i];
                 textBox.Text = sourceText;
                 var fontfamilyString = fontFamilies[fontFamilyComboBox.SelectedIndex];
                 textBox.FontFamily = new System.Windows.Media.FontFamily(fontfamilyString);
-                textBox.Foreground = textColors[i];
+                var c = textColors[i].Color;
+                var color = System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B);
+                textBox.Foreground = new SolidColorBrush(color);
             }
         }
 
 
-        private void CaptureControl(Visual targetControl)
+        // TODO: Visualじゃなくて、Controlでいい？
+        private BitmapSource CaptureControl(Visual targetControl)
         {
             System.Windows.Point leftTopCorner = targetControl.PointToScreen(new System.Windows.Point(0f, 0f));
             var width = (targetControl as FrameworkElement).ActualWidth;
@@ -96,12 +108,19 @@ namespace SlackEmojiCreator
                 }
             }
 
-            using (var fStream = new FileStream("result.png", FileMode.Create))
-            {
-                PngBitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-                encoder.Save(fStream);
-            }
+            return bitmapSource;
+
+            //var mStream = new MemoryStream()
+            //PngBitmapEncoder encoder = new PngBitmapEncoder();
+            //encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+            //encoder.Save(mStream);
+
+            //using (var fStream = new FileStream("result.png", FileMode.Create))
+            //{
+            //    PngBitmapEncoder encoder = new PngBitmapEncoder();
+            //    encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+            //    encoder.Save(fStream);
+            //}
         }
 
         // TODO: keydownだとタイミングが合わない
@@ -112,12 +131,13 @@ namespace SlackEmojiCreator
         }
 
 
-        private Dictionary<string, System.Windows.Controls.Image> candidates = new Dictionary<string, System.Windows.Controls.Image>();
+        private Dictionary<string, BitmapSource> candidates = new Dictionary<string, BitmapSource>();
 
         private void AddButton_Clicked(object sender, RoutedEventArgs e)
         {
-            var baseName = inputText;
-            if (baseName.Text.Length < 1)
+            var baseName = inputText.Text.Replace(" ", "").Replace("　", "");
+            baseName = baseName.Replace("\n", "").Replace("\r", "");
+            if (baseName.Length < 1)
             {
                 return;
             }
@@ -125,33 +145,41 @@ namespace SlackEmojiCreator
             candidates.Clear();
             candidatesText.Text = "";
 
-            //for (int i = 0; i < images.Length; i++)
-            //{
-            //    var name = baseName.Text + "-" + textColors[i].Color.Name.ToString();
-            //    candidates.Add(name, images[i]);
-            //    candidatesText.Text += name;
-            //    candidatesText.Text += "\n";
-            //}
+            for (int i = 0; i < outputTextBlocks.Length; i++)
+            {
+                var name = baseName + "-" + textColors[i].Color.Name.ToString();
+                name = name.ToLowerInvariant();
+                var bitmapSource = CaptureControl(outputTextBoxParents[i]);
+                candidates.Add(name, bitmapSource);
+                candidatesText.Text += name;
+                candidatesText.Text += "\n";
+            }
         }
 
         private void UploadButton_Clicked(object sender, RoutedEventArgs e)
         {
             // TODO: LocalFileUploaderから、MemoryStreamのアップロード機能を分離する。
             var uploader = new LocalFileEmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
-            foreach((string name, System.Windows.Controls.Image image) in candidates)
+            foreach ((string name, BitmapSource bitmapSource) in candidates)
             {
-                byte[] imageArray = GetByteArray(image);
+
+                byte[] imageArray = GetByteArray(bitmapSource);
                 Task.Run(() => uploader.UploadEmojiAsync(imageArray, name));
             }
         }
 
         private byte[] GetByteArray(System.Windows.Controls.Image image)
         {
+            var bitmapSource = image.Source.Clone() as BitmapSource;
+            return GetByteArray(bitmapSource);           
+        }
+
+        private byte[] GetByteArray(BitmapSource bitmapSource)
+        {
             // TODO: 
             byte[] imageArray;
             var encoder = new PngBitmapEncoder();
 
-            var bitmapSource = image.Source.Clone() as BitmapSource;
             encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
             using (var ms = new MemoryStream())
             {
