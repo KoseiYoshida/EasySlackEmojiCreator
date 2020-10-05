@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SlackEmojiCreator
 {
-    public sealed class LocalFileEmojiUploader
+    public sealed class LocalFileEmojiUploader : IDisposable
     {
         private const string UrlAddBase = "https://{0}.slack.com/api/emoji.add";
 
@@ -21,6 +21,7 @@ namespace SlackEmojiCreator
                 throw new Exception($"Token is null or empty.");
             }
 
+            // TODO: パラメータとしてのtokenが必要か確認する。（contentでもtokenをつけているので）
             return new Uri(string.Format(UrlAddBase, this.workspace) + "?token=" + this.token);
         }
 
@@ -32,7 +33,7 @@ namespace SlackEmojiCreator
         public LocalFileEmojiUploader(string workspace, string token)
         {
             this.workspace = workspace;
-            this.token = token;           
+            this.token = token;  
         }
 
         /// <summary>
@@ -86,7 +87,8 @@ namespace SlackEmojiCreator
         {           
 
             // TODO: 不正な拡張子を防ぐ処理を書く。
-
+            
+            // TODO: 毎回uriを生成するのは非効率？
             var uri = GetEmojiAddUri();
 
             // 大文字のアルファベットは絵文字の名前で使えないので小文字にする。
@@ -118,6 +120,11 @@ namespace SlackEmojiCreator
             {
                 Console.WriteLine($"error : {ex}");
             }
+        }
+
+        public void Dispose()
+        {
+            client.Dispose();
         }
     }
 }
