@@ -36,22 +36,11 @@ namespace SlackEmojiCreator
                 return;
             }
 
-            if (string.IsNullOrEmpty(emojiListToken.Text))
-            {
-                UpdateResultMessage("Please enter emoji list token.");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(emojiAddToken.Text))
-            {
-                UpdateResultMessage("Please enter emoji add token.");
-                return;
-            }
-
             var defaultSetting = Properties.Settings.Default;
             defaultSetting.Workspace = workspaceName.Text;
             defaultSetting.EmojiListToken = emojiListToken.Text;
             defaultSetting.EmojiAddToken = emojiAddToken.Text;
+            defaultSetting.EmojiRemoveToken = emojiRemoveToken.Text;
 
             try
             {

@@ -11,6 +11,24 @@ namespace SlackEmojiCreator
 {
     public sealed class EmojiListFetcher
     {
+        private static string[] SlackDefaultEmojiNames = new string[]
+        {
+                    "bowtie",
+                    "squirrel",
+                    "glitch_crab",
+                    "piggy",
+                    "cubimal_chick",
+                    "dusty_stick",
+                    "slack",
+                    "pride",
+                    "thumbsup_all",
+                    "slack_call",
+                    "shipit",
+                    "white_square",
+                    "black_square",
+                    "simple_smile",
+        };
+
         private const string UrlListBase = "https://{0}.slack.com/api/emoji.list";
         private Uri GetEmojiListUri()
         {
@@ -37,7 +55,6 @@ namespace SlackEmojiCreator
         }
 
 
-        // TODO: 失敗理由を返す。
         /// <summary>
         /// Get original emoji names in workspace;
         /// </summary>
@@ -46,9 +63,9 @@ namespace SlackEmojiCreator
         /// <remarks>
         /// API details <seealso cref="https://api.slack.com/methods/emoji.list"/>
         /// </remarks>
-        public async Task<string[]> GetEmojiNamesAsync()
+        public async Task<Dictionary<string, Uri>> GetUploadedEmojiInfoAsync()
         {
-            var emojiDict = new Dictionary<string, string>();
+            var emojiDict = new Dictionary<string, Uri>();
 
             var emojiListUri = GetEmojiListUri();
             var request = WebRequest.CreateHttp(emojiListUri);
@@ -65,7 +82,7 @@ namespace SlackEmojiCreator
             catch(Exception ex)
             {
                 Console.WriteLine($"Failed to get response json. {ex}");
-                return Array.Empty<string>();
+                throw ex;
             }
 
 
@@ -76,7 +93,7 @@ namespace SlackEmojiCreator
                 {
                     var errorMsg = jsonObject["error"].ToString();
                     Console.WriteLine($"Invalid request. reason : {errorMsg}");
-                    return Array.Empty<string>();
+                    throw new Exception($"{errorMsg}");
                 }
 
 
@@ -84,20 +101,25 @@ namespace SlackEmojiCreator
                 foreach (var e in emojis)
                 {
                     var name = e.Key;
-                    var uri = e.Value.ToString();
+                    if (SlackDefaultEmojiNames.Contains(name))
+                    {
+                        continue;
+                    }
+
+                    var uri = new Uri(e.Value.ToString());
                     emojiDict.Add(name, uri);
-                }  
-                return emojiDict.Keys.ToArray();
+                }
+                return emojiDict;
             }
             catch (JsonReaderException ex)
             {
                 Console.WriteLine($"Failed to parse json. {ex}");
-                return Array.Empty<string>();
+                throw ex;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Failed to get emoji list. {ex}");
-                return Array.Empty<string>();
+                throw ex;
             }
 
         }

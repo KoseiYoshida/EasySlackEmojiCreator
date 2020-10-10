@@ -58,5 +58,17 @@ namespace SlackEmojiCreator.Properties {
                 this["EmojiAddToken"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string EmojiRemoveToken {
+            get {
+                return ((string)(this["EmojiRemoveToken"]));
+            }
+            set {
+                this["EmojiRemoveToken"] = value;
+            }
+        }
     }
 }
