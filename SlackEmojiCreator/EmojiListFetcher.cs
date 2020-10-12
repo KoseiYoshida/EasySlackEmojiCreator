@@ -81,10 +81,9 @@ namespace SlackEmojiCreator
             }
             catch(Exception ex)
             {
-                Console.WriteLine($"Failed to get response json. {ex}");
+                Console.WriteLine($"Failed to get response json. {ex} workspace:{workspace}, token:{token}");
                 throw ex;
             }
-
 
             try
             {
@@ -92,7 +91,7 @@ namespace SlackEmojiCreator
                 if (!(bool)jsonObject["ok"])
                 {
                     var errorMsg = jsonObject["error"].ToString();
-                    Console.WriteLine($"Invalid request. reason : {errorMsg}");
+                    Console.WriteLine($"Invalid request. reason : {errorMsg}, workspace:{workspace}, token:{token}");
                     throw new Exception($"{errorMsg}");
                 }
 
