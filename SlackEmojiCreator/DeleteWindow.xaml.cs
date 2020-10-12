@@ -50,11 +50,6 @@ namespace SlackEmojiCreator
             // TODO: Uri保持する意味はないかも。プレビュー用の画像とってくるのに使うだけ。
             emojiInfoDict = await emojiListFetcher.GetUploadedEmojiInfoAsync();
 
-            foreach(var info in emojiInfoDict)
-            {
-                Console.WriteLine($"\"{info.Key}\", ");
-            }
-
             emojiDatas.Clear();
 
             foreach ((var name, var _) in emojiInfoDict)
@@ -83,6 +78,7 @@ namespace SlackEmojiCreator
 
             if (string.IsNullOrWhiteSpace(token))
             {
+                Console.WriteLine($"No token");
                 throw new ArgumentNullException($"");
             }
 
