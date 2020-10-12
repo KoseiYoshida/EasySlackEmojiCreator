@@ -16,10 +16,11 @@
             <TextBox x:Name="workspaceName" Width="300" />
             <Label Content="EmojiListToken" />
             <TextBox x:Name="emojiListToken" Width="300" />
-            <Label Content="EmojiAddToken" />
+            <!--  EmojiListTokenで、AddもRemoveもできる。  -->
+            <!--<Label Content="EmojiAddToken" />
             <TextBox x:Name="emojiAddToken" Width="300" />
             <Label Content="EmojiRemoveToken" />
-            <TextBox x:Name="emojiRemoveToken" Width="300" />
+            <TextBox x:Name="emojiRemoveToken" Width="300" />-->
             <Button
                 x:Name="SaveButton"
                 Click="SaveButton_Click"

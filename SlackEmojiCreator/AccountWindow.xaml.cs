@@ -18,7 +18,8 @@ namespace SlackEmojiCreator
             var defaultSetting = Properties.Settings.Default;
             workspaceName.Text = defaultSetting.Workspace;
             emojiListToken.Text = defaultSetting.EmojiListToken;
-            emojiAddToken.Text = defaultSetting.EmojiAddToken;
+            //emojiAddToken.Text = defaultSetting.EmojiAddToken;
+            //emojiRemoveToken.Text = defaultSetting.EmojiRemoveToken;
         }
 
         private void UpdateResultMessage(string msg)
@@ -39,8 +40,12 @@ namespace SlackEmojiCreator
             var defaultSetting = Properties.Settings.Default;
             defaultSetting.Workspace = workspaceName.Text;
             defaultSetting.EmojiListToken = emojiListToken.Text;
-            defaultSetting.EmojiAddToken = emojiAddToken.Text;
-            defaultSetting.EmojiRemoveToken = emojiRemoveToken.Text;
+            //defaultSetting.EmojiAddToken = emojiAddToken.Text;
+            //defaultSetting.EmojiRemoveToken = emojiRemoveToken.Text;
+
+            // EmojiListTokenでAddもRemoveもできる。
+            defaultSetting.EmojiAddToken = emojiListToken.Text;
+            defaultSetting.EmojiRemoveToken = emojiListToken.Text;
 
             try
             {
