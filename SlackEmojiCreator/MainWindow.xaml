@@ -18,41 +18,58 @@
 
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="4*" />
-                <RowDefinition Height="4*" />
+                <RowDefinition Height="8*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
 
 
-            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Top">
-                <!--  &#xA;で改行  -->
-                <TextBox
-                    x:Name="inputText"
-                    AcceptsReturn="True"
-                    BorderThickness="0"
-                    FontSize="100"
-                    PreviewKeyUp="inputText_PreviewKeyUp"
-                    Text="text"
-                    TextBlock.LineHeight="100"
-                    TextBlock.LineStackingStrategy="BlockLineHeight" />
-            </Viewbox>
-
-
-
-            <StackPanel Grid.Row="1">
-                <Label Margin="10" Content="Font Family" />
-                <ComboBox
-                    x:Name="fontFamilyComboBox"
-                    Height="40"
+            <StackPanel Grid.Row="0">
+                <Viewbox
+                    MaxWidth="100"
+                    MaxHeight="100"
                     Margin="10"
-                    SelectionChanged="FontFamilyComboBox_SelectionChanged" />
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+                    <!--  &#xA;で改行  -->
+                    <TextBox
+                        x:Name="inputText"
+                        AcceptsReturn="True"
+                        BorderThickness="0"
+                        FontSize="100"
+                        PreviewKeyUp="inputText_PreviewKeyUp"
+                        Text="text&#xA;text"
+                        TextBlock.LineHeight="100"
+                        TextBlock.LineStackingStrategy="BlockLineHeight" />
+                </Viewbox>
+
+                <StackPanel>
+                    <Label Margin="10" Content="Font Family" />
+                    <ComboBox
+                        x:Name="fontFamilyComboBox"
+                        Height="40"
+                        Margin="10"
+                        SelectionChanged="FontFamilyComboBox_SelectionChanged" />
+                </StackPanel>
+
             </StackPanel>
 
-            <Button
-                Grid.Row="2"
-                Margin="5"
-                Click="AccountButton_Click"
-                Content="Account" />
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    Grid.Column="0"
+                    Margin="5"
+                    Click="AccountButton_Click"
+                    Content="Account" />
+                <Button
+                    Grid.Column="1"
+                    Margin="5"
+                    Click="DeleteButton_Click"
+                    Content="Delete" />
+            </Grid>
+
         </Grid>
 
         <Grid Grid.Column="1">

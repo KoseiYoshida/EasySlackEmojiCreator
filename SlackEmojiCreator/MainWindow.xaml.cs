@@ -199,5 +199,13 @@ namespace SlackEmojiCreator
             var textbox = (sender as TextBox);
             UpdateOutputTexts(textbox.Text);
         }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new DeleteWindow();
+            window.Owner = this;
+            window.ShowDialog();
+        }
+
     }
 }
