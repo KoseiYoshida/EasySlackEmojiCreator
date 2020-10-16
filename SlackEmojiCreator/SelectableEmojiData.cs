@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Windows;
+using System.Windows.Media;
 
 namespace SlackEmojiCreator
 {
@@ -22,6 +24,24 @@ namespace SlackEmojiCreator
                 OnPropertyChanged($"{nameof(Selected)}");
             }
         }
+
+        private Uri thumnailUri = null;
+        public Uri ThumnailUri
+        {
+            get
+            {
+                return thumnailUri;
+            }
+            set
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    thumnailUri = value;
+                    OnPropertyChanged($"{nameof(ThumnailUri)}");
+                });                
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         public virtual void OnPropertyChanged(string name)

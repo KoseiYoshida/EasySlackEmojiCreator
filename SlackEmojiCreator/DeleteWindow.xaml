@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:SlackEmojiCreator"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="DeleteWindow"
     Width="800"
@@ -11,11 +10,19 @@
     Loaded="Window_Loaded"
     mc:Ignorable="d">
     <Window.Resources>
-        <DataTemplate x:Key="FirstCell">
-            <Grid>
-                <TextBlock Width="200" Text="{Binding Path=Name}" />
+        <DataTemplate x:Key="SelectEmojiLine">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="20">
+                    <Image.Source>
+                        <BitmapImage UriSource="{Binding Path=ThumnailUri}" />
+                    </Image.Source>
+                </Image>
+                <TextBlock
+                    Width="100"
+                    Margin="10,0"
+                    Text="{Binding Path=Name}" />
                 <CheckBox Width="30" IsChecked="{Binding Path=Selected}" />
-            </Grid>
+            </StackPanel>
         </DataTemplate>
     </Window.Resources>
 
@@ -35,6 +42,8 @@
                 Height="50"
                 Click="DeleteButton_Click"
                 Content="Delete" />
+            <Image x:Name="testImage" Height="225">
+            </Image>
         </StackPanel>
 
         <ListView
@@ -43,7 +52,7 @@
             ItemsSource="{Binding}">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Width="200" CellTemplate="{StaticResource FirstCell}">
+                    <GridViewColumn CellTemplate="{StaticResource SelectEmojiLine}">
                         <GridViewColumnHeader Content="Emoji" />
                     </GridViewColumn>
                 </GridView>

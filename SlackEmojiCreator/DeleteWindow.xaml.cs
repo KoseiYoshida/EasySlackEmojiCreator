@@ -13,8 +13,8 @@ namespace SlackEmojiCreator
     /// </summary>
     public partial class DeleteWindow : Window
     {
-        private EmojiListFetcher emojiListFetcher;
-        private ObservableCollection<SelectableEmojiData> emojiDatas = new ObservableCollection<SelectableEmojiData>();
+        private readonly EmojiListFetcher emojiListFetcher;
+        private readonly ObservableCollection<SelectableEmojiData> emojiDatas = new ObservableCollection<SelectableEmojiData>();
         private Dictionary<string, Uri> emojiInfoDict = new Dictionary<string, Uri>();
 
 
@@ -37,7 +37,6 @@ namespace SlackEmojiCreator
             Task.Run(() => UpdateList());
         }
 
-
         private async Task UpdateList()
         {
             // TODO: プレビュー用の画像とってくる
@@ -45,9 +44,9 @@ namespace SlackEmojiCreator
 
             emojiDatas.Clear();
 
-            foreach ((var name, var _) in emojiInfoDict)
-            {
-                var data = new SelectableEmojiData() { Name = name, Selected = false };
+            foreach ((var name, var imageUri) in emojiInfoDict)
+            {                    
+                var data = new SelectableEmojiData() { Name = name, Selected = false, ThumnailUri = imageUri };
                 try
                 {
                     emojiDatas.Add(data);
