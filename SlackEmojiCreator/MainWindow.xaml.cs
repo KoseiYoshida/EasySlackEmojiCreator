@@ -141,7 +141,7 @@ namespace SlackEmojiCreator
         private void UploadButton_Clicked(object sender, RoutedEventArgs e)
         {
             // TODO: LocalFileUploaderから、MemoryStreamのアップロード機能を分離する。
-            var uploader = new LocalFileEmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
+            var uploader = new EmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
             foreach ((string name, BitmapSource bitmapSource) in candidates)
             {
 
