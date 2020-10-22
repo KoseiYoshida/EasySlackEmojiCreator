@@ -42,10 +42,10 @@
                                 x:Name="inputText"
                                 AcceptsReturn="True"
                                 BorderThickness="0"
-                                FontSize="100"
+                                FontSize="30"
                                 PreviewKeyUp="inputText_PreviewKeyUp"
                                 Text="text&#xA;area"
-                                TextBlock.LineHeight="100"
+                                TextBlock.LineHeight="30"
                                 TextBlock.LineStackingStrategy="BlockLineHeight" />
                         </Viewbox>
                     </TextBlock>
