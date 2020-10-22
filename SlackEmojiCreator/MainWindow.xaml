@@ -35,7 +35,6 @@
                         <Viewbox
                             MaxWidth="100"
                             MaxHeight="100"
-                            Margin="10"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top">
                             <!--  &#xA;で改行  -->
@@ -45,7 +44,7 @@
                                 BorderThickness="0"
                                 FontSize="100"
                                 PreviewKeyUp="inputText_PreviewKeyUp"
-                                Text="tt&#xA;xt"
+                                Text="text&#xA;area"
                                 TextBlock.LineHeight="100"
                                 TextBlock.LineStackingStrategy="BlockLineHeight" />
                         </Viewbox>
