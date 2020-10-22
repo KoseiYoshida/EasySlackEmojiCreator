@@ -1,13 +1,49 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace SlackEmojiCreator
+namespace SlackEmojiCreator.Upload
 {
     public sealed class EmojiUploader : IDisposable
     {
-        private const string UrlAddBase = "https://{0}.slack.com/api/emoji.add";
+        private static readonly string UrlAddBase = "https://{0}.slack.com/api/emoji.add";
+        private static readonly string[] AvailableExtensions = new string[4]
+        {
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".gif"
+        };
+        // Failure reason for upload request. See https://api.slack.com/methods/admin.emoji.add
+        private static readonly Dictionary<string, FailureReason> failureReasonDict = new Dictionary<string, FailureReason>()
+        {
+            { "error_bad_name_i18n", FailureReason.NameIsInvalid },
+            { "error_name_taken", FailureReason.NameIsAlreadyExist },
+            { "error_name_taken_i18n", FailureReason.NameIsAlreadyExist },
+            { "error_missing_name", FailureReason.NameIsInvalid },
+            { "error_no_image", FailureReason.ImageIsInvalid },
+            { "error_bad_format", FailureReason.ImageIsInvalid },
+            { "no_image_uploaded", FailureReason.ImageIsInvalid },
+            { "error_too_big", FailureReason.ImageIsInvalid },
+            { "error_bad_wide", FailureReason.ImageIsInvalid },
+            { "too_many_frames", FailureReason.ImageIsInvalid },
+            { "resized_but_still_too_large", FailureReason.ImageIsInvalid },
+            { "ratelimited", FailureReason.RequestError },
+            { "emoji_limit_reached", FailureReason.OverLimit },
+            { "not_authed", FailureReason.AuthError },
+            { "invalid_auth", FailureReason.AuthError },
+            { "account_inactive", FailureReason.AuthError },
+            { "token_revoked", FailureReason.AuthError },
+            { "no_permission", FailureReason.AuthError },
+            { "missing_scope", FailureReason.AuthError },
+            { "not_allowed_token_type", FailureReason.AuthError },
+            { "is_bot", FailureReason.UploadedFromBot },
+            { "request_timeout", FailureReason.TimeOut },
+        };
 
         private readonly string workspace;
         private readonly string token;
@@ -16,16 +52,23 @@ namespace SlackEmojiCreator
         private HttpClient client;
 
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="workspace">Workspace name</param>
+        /// <param name="token">Token to add emoji</param>
+        /// <exception cref="ArgumentException">Throw if <paramref name="workspace"/> is null or whitespace.</exception>
+        /// <exception cref="ArgumentException">Throw if <paramref name="token"/> is null or whitespace.</exception>
         public EmojiUploader(string workspace, string token)
         {
             if (string.IsNullOrWhiteSpace(workspace))
             {
-                throw new Exception($"Workspace is null or empty.");
+                throw new ArgumentException($"Workspace is null or whitespace. Please set.");
             }
 
-            if (string.IsNullOrEmpty(token))
+            if (string.IsNullOrWhiteSpace(token))
             {
-                throw new Exception($"Token is null or empty.");
+                throw new ArgumentException($"Token is null or whitespace. Please set.");
             }
 
             this.workspace = workspace;
@@ -38,32 +81,52 @@ namespace SlackEmojiCreator
         /// Upload file as emoji.
         /// </summary>
         /// <param name="filePath">Path of image file</param>
-        /// <returns></returns>
-        public async Task UploadEmojiAsync(string filePath)
+        /// <returns><see cref="UploadResult"/></returns>        
+        public async Task<UploadResult> UploadEmojiAsync(string filePath)
         {
-            if (!File.Exists(filePath))
+            if (string.IsNullOrWhiteSpace(filePath))
             {
-                throw new FileNotFoundException();
+                return new UploadResult(false, FailureReason.FilepathIsInvalid);
             }
 
-            // TODO: 不正な拡張子を防ぐ処理を書く。
+            if (!File.Exists(filePath))
+            {
+                return new UploadResult(false, FailureReason.FileNotExist);
+            }
+
+            var fileExtension = Path.GetExtension(filePath);
+            var isAvailableExtension = AvailableExtensions.Contains(fileExtension);
+            if (!isAvailableExtension)
+            {
+                return new UploadResult(false, FailureReason.FileExtensionIsNotAvailable);
+            }
 
             var imageBytes = await File.ReadAllBytesAsync(filePath);
             var fileName = Path.GetFileNameWithoutExtension(filePath);
-            await UploadEmojiAsync(imageBytes, fileName);
+            return await UploadEmojiAsync(imageBytes, fileName);
         }
 
-        public async Task UploadEmojiAsync(byte[] imageArray, string fileName)
+        // TODO: ドキュメントコメント書く
+        /// <summary>
+        /// Upload byte array as emoji.
+        /// </summary>
+        /// <param name="imageBytes">Byte array of image</param>
+        /// <param name="fileName">Name of image</param>
+        /// <returns><see cref="UploadResult"/></returns>
+        public async Task<UploadResult> UploadEmojiAsync(byte[] imageBytes, string fileName)
         {
+            if (string.IsNullOrWhiteSpace(uri.ToString()))
+            {
+                return new UploadResult(false, FailureReason.UriIsInvalid);
+            }
 
-            // TODO: 不正な拡張子を防ぐ処理を書く。
 
             // 大文字のアルファベットは絵文字の名前で使えないので小文字にする。
             fileName = fileName.ToLowerInvariant();
 
             MultipartFormDataContent content = new MultipartFormDataContent();
-            ByteArrayContent imageBytes = new ByteArrayContent(imageArray);
-            content.Add(imageBytes, "image", fileName);
+            ByteArrayContent imageContent = new ByteArrayContent(imageBytes);
+            content.Add(imageContent, "image", fileName);
             content.Add(new StringContent("data"), "mode");
             content.Add(new StringContent(token), "token");
             content.Add(new StringContent(fileName), "name");
@@ -71,24 +134,40 @@ namespace SlackEmojiCreator
             try
             {
                 var msg = await client.PostAsync(uri, content);
-                // HttpResponseMessage.StatusはPostが失敗してもOKになってしまう。なので、Contentを確認する。
+
+                // HttpResponseMessage.Status will be "ok" even if  the post failed. Check the responseContent
                 var responseContent = await msg.Content.ReadAsStringAsync();
                 var isSucceeded = responseContent == "{\"ok\":true}";
                 if (isSucceeded)
                 {
                     Console.WriteLine($"Add {fileName} succeeded.");
+                    return new UploadResult(true, FailureReason.NotFailed);
                 }
                 else
                 {
                     Console.WriteLine($"Post failed. {responseContent}");
+
+                    var failureResponse = JsonSerializer.Deserialize<FailureResponse>(responseContent);
+                    if(failureReasonDict.TryGetValue(failureResponse.Error, out var reason))
+                    {
+                        return new UploadResult(false, reason);
+                    }
+                    else
+                    {
+                        return new UploadResult(false, FailureReason.NoDetail);
+                    }
                 }
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
                 Console.WriteLine($"error : {ex}");
+                return new UploadResult(false, FailureReason.RequestError);
             }
         }
 
+        /// <summary>
+        /// Implementation of <see cref="IDisposable"/>
+        /// </summary>
         public void Dispose()
         {
             client.Dispose();
