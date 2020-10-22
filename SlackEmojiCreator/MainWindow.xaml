@@ -24,23 +24,34 @@
 
 
             <StackPanel Grid.Row="0">
-                <Viewbox
-                    MaxWidth="100"
-                    MaxHeight="100"
+                <Border
+                    Width="100"
+                    Height="100"
                     Margin="10"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top">
-                    <!--  &#xA;で改行  -->
-                    <TextBox
-                        x:Name="inputText"
-                        AcceptsReturn="True"
-                        BorderThickness="0"
-                        FontSize="100"
-                        PreviewKeyUp="inputText_PreviewKeyUp"
-                        Text="text&#xA;text"
-                        TextBlock.LineHeight="100"
-                        TextBlock.LineStackingStrategy="BlockLineHeight" />
-                </Viewbox>
+                    HorizontalAlignment="Center"
+                    BorderBrush="Black"
+                    BorderThickness="2">
+                    <TextBlock>
+                        <Viewbox
+                            MaxWidth="100"
+                            MaxHeight="100"
+                            Margin="10"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
+                            <!--  &#xA;で改行  -->
+                            <TextBox
+                                x:Name="inputText"
+                                AcceptsReturn="True"
+                                BorderThickness="0"
+                                FontSize="100"
+                                PreviewKeyUp="inputText_PreviewKeyUp"
+                                Text="tt&#xA;xt"
+                                TextBlock.LineHeight="100"
+                                TextBlock.LineStackingStrategy="BlockLineHeight" />
+                        </Viewbox>
+                    </TextBlock>
+                </Border>
+
 
                 <StackPanel>
                     <Label Margin="10" Content="Font Family" />
