@@ -195,6 +195,14 @@ namespace SlackEmojiCreator
             window.ShowDialog();
         }
 
+        private void inputText_GotFocus(object sender, RoutedEventArgs e)
+        {
+            this.Dispatcher.InvokeAsync(() => {
+                Task.Delay(0);
+                ((TextBox)sender).SelectAll();
+            });
+        }
+
         private void inputText_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             var textbox = (sender as TextBox);

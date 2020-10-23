@@ -43,6 +43,7 @@
                                 AcceptsReturn="True"
                                 BorderThickness="0"
                                 FontSize="30"
+                                GotFocus="inputText_GotFocus"
                                 PreviewKeyUp="inputText_PreviewKeyUp"
                                 Text="text&#xA;area"
                                 TextBlock.LineHeight="30"
