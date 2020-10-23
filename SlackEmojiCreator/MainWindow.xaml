@@ -8,6 +8,7 @@
     Title="MainWindow"
     Width="800"
     Height="450"
+    FocusManager.FocusedElement="{Binding ElementName=inputText}"
     mc:Ignorable="d">
     <Grid>
         <Grid.ColumnDefinitions>
