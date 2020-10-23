@@ -151,12 +151,6 @@ namespace SlackEmojiCreator
             }
         }
 
-        private byte[] GetByteArray(System.Windows.Controls.Image image)
-        {
-            var bitmapSource = image.Source.Clone() as BitmapSource;
-            return GetByteArray(bitmapSource);           
-        }
-
         private byte[] GetByteArray(BitmapSource bitmapSource)
         {
             // TODO: 
