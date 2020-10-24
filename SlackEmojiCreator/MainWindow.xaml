@@ -20,6 +20,11 @@
                     Width="100"
                     Margin="10,0"
                     Text="{Binding Path=Name}" />
+                <Button
+                    Width="20"
+                    Click="emojiDeleteButton_Click"
+                    Content="✖">
+                </Button>
             </StackPanel>
         </DataTemplate>
     </Window.Resources>
