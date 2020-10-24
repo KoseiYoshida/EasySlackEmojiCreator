@@ -22,12 +22,12 @@ namespace SlackEmojiCreator.Delete
         {
             InitializeComponent();
 
-            var workspace = Properties.Settings.Default.Workspace;
-            var emojiListToken = Properties.Settings.Default.EmojiListToken;
-            emojiListFetcher = new EmojiListFetcher(workspace, emojiListToken);
-
             // 複数スレッドで使用されるコレクションへの参加
             BindingOperations.EnableCollectionSynchronization(emojiDatas, new object());
+
+            var workspace = Properties.Settings.Default.Workspace;
+            var emojiListToken = Properties.Settings.Default.EmojiListToken;
+            emojiListFetcher = new EmojiListFetcher(workspace, emojiListToken);            
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
