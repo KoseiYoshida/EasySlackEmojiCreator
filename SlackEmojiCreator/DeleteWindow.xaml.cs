@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
-namespace SlackEmojiCreator
+namespace SlackEmojiCreator.Delete
 {
     /// <summary>
     /// DeleteWindow.xaml の相互作用ロジック

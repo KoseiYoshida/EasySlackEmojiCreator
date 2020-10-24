@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 
-namespace SlackEmojiCreator
+namespace SlackEmojiCreator.Delete
 {
     class SelectableEmojiData : INotifyPropertyChanged
     {

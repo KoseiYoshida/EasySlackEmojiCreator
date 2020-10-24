@@ -1,4 +1,5 @@
-﻿using SlackEmojiCreator.Upload;
+﻿using SlackEmojiCreator.Delete;
+using SlackEmojiCreator.Upload;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
