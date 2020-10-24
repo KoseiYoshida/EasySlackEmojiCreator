@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace SlackEmojiCreator.Delete
 {
-    class SelectableEmojiData : INotifyPropertyChanged
+    public sealed class SelectableEmojiData : INotifyPropertyChanged
     {
         public string Name { get; set; } = "";
 
@@ -41,7 +41,7 @@ namespace SlackEmojiCreator.Delete
 
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public virtual void OnPropertyChanged(string name)
+        public void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
