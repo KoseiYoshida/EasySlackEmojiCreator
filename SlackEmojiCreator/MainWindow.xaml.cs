@@ -1,14 +1,9 @@
 ﻿using SlackEmojiCreator.Delete;
 using SlackEmojiCreator.Upload;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Drawing.Text;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,8 +11,6 @@ using System.Windows.Data;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Brush = System.Drawing.Brush;
-using Brushes = System.Drawing.Brushes;
 
 namespace SlackEmojiCreator
 {
@@ -216,5 +209,15 @@ namespace SlackEmojiCreator
             window.ShowDialog();
         }
 
+        private void emojiDeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            var context = (sender as Button).DataContext;
+            if(!(context is EmojiData))
+            {
+                throw new ArgumentException($"This context is not {nameof(EmojiData)}. Context type : {context.GetType()}");
+            }
+
+            emojiDatas.Remove(context as EmojiData);
+        }
     }
 }
