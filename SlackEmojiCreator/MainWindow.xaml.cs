@@ -2,6 +2,7 @@
 using SlackEmojiCreator.Upload;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
@@ -11,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -24,9 +26,15 @@ namespace SlackEmojiCreator
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly ObservableCollection<EmojiData> emojiDatas = new ObservableCollection<EmojiData>();
+
         public MainWindow()
         {
             InitializeComponent();
+
+            // 複数スレッドで使用されるコレクションへの参加
+            BindingOperations.EnableCollectionSynchronization(emojiDatas, new object());
+            
 
             textColors = new SolidBrush[4]
             {
@@ -69,6 +77,10 @@ namespace SlackEmojiCreator
             
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            emojiListView.DataContext = emojiDatas;
+        }
 
         private readonly TextBlock[] outputTextBlocks;
         private readonly TextBlock[] outputTextBoxParents;
@@ -114,9 +126,6 @@ namespace SlackEmojiCreator
         }
 
 
-
-        private Dictionary<string, BitmapSource> candidates = new Dictionary<string, BitmapSource>();
-
         private void AddButton_Clicked(object sender, RoutedEventArgs e)
         {
             var baseName = inputText.Text.Replace(" ", "").Replace("　", "");
@@ -126,17 +135,14 @@ namespace SlackEmojiCreator
                 return;
             }
 
-            candidates.Clear();
-            candidatesText.Text = "";
-
             for (int i = 0; i < outputTextBlocks.Length; i++)
             {
                 var name = baseName + "-" + textColors[i].Color.Name.ToString();
                 name = name.ToLowerInvariant();
                 var bitmapSource = CaptureControl(outputTextBoxParents[i]);
-                candidates.Add(name, bitmapSource);
-                candidatesText.Text += name;
-                candidatesText.Text += "\n";
+
+                var data = new EmojiData() { Name = name, BitmapSource = bitmapSource };
+                emojiDatas.Add(data);
             }
         }
 
@@ -144,10 +150,10 @@ namespace SlackEmojiCreator
         {
             // TODO: LocalFileUploaderから、MemoryStreamのアップロード機能を分離する。
             var uploader = new EmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
-            foreach ((string name, BitmapSource bitmapSource) in candidates)
+            foreach (var emoji in emojiDatas)
             {
-
-                byte[] imageArray = GetByteArray(bitmapSource);
+                var name = emoji.Name;
+                byte[] imageArray = GetByteArray(emoji.BitmapSource);
                 Task.Run(() => uploader.UploadEmojiAsync(imageArray, name));
             }
         }
@@ -172,8 +178,7 @@ namespace SlackEmojiCreator
 
         private void ClearButton_Clicked(object sender, RoutedEventArgs e)
         {
-            candidates.Clear();
-            candidatesText.Text = "files";
+            emojiDatas.Clear();
         }
 
 
