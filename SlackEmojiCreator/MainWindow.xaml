@@ -22,8 +22,11 @@
                     Text="{Binding Path=Name}" />
                 <Button
                     Width="20"
+                    Background="White"
+                    BorderThickness="1"
                     Click="emojiDeleteButton_Click"
-                    Content="✖">
+                    Content="✖"
+                    Foreground="Red">
                 </Button>
             </StackPanel>
         </DataTemplate>
