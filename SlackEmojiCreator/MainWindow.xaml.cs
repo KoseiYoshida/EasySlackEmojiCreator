@@ -1,6 +1,7 @@
 ﻿using SlackEmojiCreator.Delete;
 using SlackEmojiCreator.Upload;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
@@ -135,11 +136,26 @@ namespace SlackEmojiCreator
         {
             // TODO: LocalFileUploaderから、MemoryStreamのアップロード機能を分離する。
             var uploader = new EmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
+
+            List<EmojiData> succeededEmojis = new List<EmojiData>();
             foreach (var emoji in emojiDatas)
             {
                 var name = emoji.Name;
                 byte[] imageArray = GetByteArray(emoji.BitmapSource);
-                Task.Run(() => uploader.UploadEmojiAsync(imageArray, name));
+                var uploadResult = Task.Run(() => uploader.UploadEmojiAsync(imageArray, name)).Result;
+                if (uploadResult.IsSucceeded)
+                {
+                    succeededEmojis.Add(emoji);
+                }
+                else
+                {
+                    Console.WriteLine($"Failed : {uploadResult.FailureReason}");
+                }
+            }
+
+            foreach(var emoji in succeededEmojis)
+            {
+                emojiDatas.Remove(emoji);
             }
         }
 
