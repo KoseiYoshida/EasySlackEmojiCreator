@@ -82,6 +82,12 @@
                         Height="40"
                         Margin="10"
                         SelectionChanged="FontFamilyComboBox_SelectionChanged" />
+                    <Label Margin="10" Content="Color" />
+                    <ComboBox
+                        x:Name="colorComboBox"
+                        Height="40"
+                        Margin="10"
+                        SelectionChanged="colorComboBox_SelectionChanged" />
                 </StackPanel>
 
             </StackPanel>

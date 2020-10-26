@@ -21,6 +21,8 @@ namespace SlackEmojiCreator
     {
         private readonly ObservableCollection<EmojiData> emojiDatas = new ObservableCollection<EmojiData>();
 
+        private readonly bool HasInitialized;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -45,8 +47,23 @@ namespace SlackEmojiCreator
                 fontFamilyComboBox.Items.Add(f);
             }
 
+            brushes = new SolidBrush[4]
+            {
+                new SolidBrush(System.Drawing.Color.Black),
+                new SolidBrush(System.Drawing.Color.Red),
+                new SolidBrush(System.Drawing.Color.Green),
+                new SolidBrush(System.Drawing.Color.Blue),
+             };
+
+            foreach (var brush in brushes)
+            {
+                colorComboBox.Items.Add(brush.Color);
+            }
+
             fontFamilyComboBox.SelectedIndex = 0;
-            
+            colorComboBox.SelectedIndex = 0;
+
+            HasInitialized = true;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -60,6 +77,7 @@ namespace SlackEmojiCreator
         private readonly TextBlock outputTextBoxParent;        
 
         private readonly string[] fontFamilies;
+        private readonly SolidBrush[] brushes;
 
         private void UpdateOutputTexts(string sourceText)
         {
@@ -67,7 +85,7 @@ namespace SlackEmojiCreator
             textBox.Text = sourceText;
             var fontfamilyString = fontFamilies[fontFamilyComboBox.SelectedIndex];
             textBox.FontFamily = new System.Windows.Media.FontFamily(fontfamilyString);
-            var c = System.Drawing.Color.Black;
+            var c = brushes[colorComboBox.SelectedIndex].Color;
             var color = System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B);
             textBox.Foreground = new SolidColorBrush(color);
         }
@@ -149,9 +167,23 @@ namespace SlackEmojiCreator
 
         private void FontFamilyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!HasInitialized)
+            {
+                return;
+            }
+
             UpdateOutputTexts(inputText.Text);
         }
 
+        private void colorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!HasInitialized)
+            {
+                return;
+            }
+
+            UpdateOutputTexts(inputText.Text);
+        }
 
         private void AccountButton_Click(object sender, RoutedEventArgs e)
         {
@@ -191,5 +223,7 @@ namespace SlackEmojiCreator
 
             emojiDatas.Remove(context as EmojiData);
         }
+
+
     }
 }
