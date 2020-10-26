@@ -64,6 +64,8 @@ namespace SlackEmojiCreator
             colorComboBox.SelectedIndex = 0;
 
             HasInitialized = true;
+
+            UpdateOutputTexts(inputText.Text);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
