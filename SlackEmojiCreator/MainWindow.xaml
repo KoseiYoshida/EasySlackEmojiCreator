@@ -118,14 +118,18 @@
             </Grid.RowDefinitions>
 
             <!--  ViewboxをそのままCaptureするとアスペクト比が変動するので、ダミーのTextBlockで囲む  -->
-            <TextBlock
-                x:Name="outputTextParent1"
+            <Border
                 Grid.Row="0"
-                Grid.Column="0">
-                <Viewbox>
-                    <TextBlock x:Name="outputText1" />
-                </Viewbox>
-            </TextBlock>
+                Grid.Column="0"
+                Margin="5"
+                BorderBrush="Black"
+                BorderThickness="1">
+                <TextBlock x:Name="outputTextParent1">
+                    <Viewbox>
+                        <TextBlock x:Name="outputText1" />
+                    </Viewbox>
+                </TextBlock>
+            </Border>
 
             <Button
                 Grid.Row="1"
