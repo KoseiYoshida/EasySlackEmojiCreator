@@ -128,16 +128,15 @@ namespace SlackEmojiCreator
             name = name.ToLowerInvariant();
             var bitmapSource = CaptureControl(outputTextBoxParent);
 
-            var data = new EmojiData() { Name = name, BitmapSource = bitmapSource };
+            var data = new EmojiData() { Name = name, BitmapSource = bitmapSource};
             emojiDatas.Add(data);
         }
 
         private void UploadButton_Clicked(object sender, RoutedEventArgs e)
         {
-            // TODO: LocalFileUploaderから、MemoryStreamのアップロード機能を分離する。
             var uploader = new EmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
 
-            List<EmojiData> succeededEmojis = new List<EmojiData>();
+            List<EmojiData> succeededEmojis = new List<EmojiData>(emojiDatas.Count);
             foreach (var emoji in emojiDatas)
             {
                 var name = emoji.Name;
@@ -145,15 +144,16 @@ namespace SlackEmojiCreator
                 var uploadResult = Task.Run(() => uploader.UploadEmojiAsync(imageArray, name)).Result;
                 if (uploadResult.IsSucceeded)
                 {
+                    emoji.Note = $"Upload Suceeded";
                     succeededEmojis.Add(emoji);
                 }
                 else
                 {
-                    Console.WriteLine($"Failed : {uploadResult.FailureReason}");
+                    emoji.Note = $"Failed : {uploadResult.FailureReason}";         
                 }
             }
-
-            foreach(var emoji in succeededEmojis)
+           
+            foreach (var emoji in succeededEmojis)
             {
                 emojiDatas.Remove(emoji);
             }

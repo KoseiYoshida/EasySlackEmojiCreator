@@ -5,7 +5,7 @@ using System.Windows.Media.Imaging;
 
 namespace SlackEmojiCreator
 {
-    public sealed class EmojiData
+    public sealed class EmojiData : INotifyPropertyChanged
     {
         private string name = "";
         public string Name
