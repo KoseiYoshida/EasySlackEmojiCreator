@@ -58,6 +58,23 @@ namespace SlackEmojiCreator
             }
         }
 
+        private Brush noteColor = new SolidColorBrush(Colors.Black);
+        public Brush NoteColor
+        {
+            get
+            {
+                return noteColor;
+            }
+            set
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    noteColor = value;
+                    OnPropertyChanged($"{nameof(NoteColor)}");
+                });
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
         {

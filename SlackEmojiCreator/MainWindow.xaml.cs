@@ -149,7 +149,8 @@ namespace SlackEmojiCreator
                 }
                 else
                 {
-                    emoji.Note = $"Failed : {uploadResult.FailureReason}";         
+                    emoji.Note = $"Failed : {uploadResult.FailureReason}";
+                    emoji.NoteColor = new SolidColorBrush(Colors.Red);
                 }
             }
            
