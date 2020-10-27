@@ -41,6 +41,22 @@ namespace SlackEmojiCreator
             }
         }
 
+        private string note = "";
+        public string Note
+        {
+            get
+            {
+                return note;
+            }
+            set
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    note = value;
+                    OnPropertyChanged($"{nameof(Note)}");
+                });
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
