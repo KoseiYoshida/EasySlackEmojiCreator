@@ -13,29 +13,23 @@
     ResizeMode="NoResize"
     mc:Ignorable="d">
     <Window.Resources>
-        <DataTemplate x:Key="EmojiLine">
-            <StackPanel Orientation="Horizontal">
-                <Image Width="20" Source="{Binding Path=BitmapSource}">
-                </Image>
-                <TextBlock
-                    Width="100"
-                    Margin="10,0"
-                    Text="{Binding Path=Name}" />
-                <TextBlock
-                    Width="100"
-                    Margin="10,0"
-                    Foreground="Gray"
-                    Text="{Binding Path=Note}">
-                </TextBlock>
-                <Button
-                    Width="20"
-                    Background="White"
-                    BorderThickness="1"
-                    Click="emojiDeleteButton_Click"
-                    Content="✖"
-                    Foreground="Red">
-                </Button>
-            </StackPanel>
+        <DataTemplate x:Key="EmojiImage">
+            <Image
+                Width="20"
+                VerticalAlignment="Center"
+                Source="{Binding Path=BitmapSource}">
+            </Image>
+        </DataTemplate>
+        <DataTemplate x:Key="EmojiDeleteButton">
+            <Button
+                Width="20"
+                VerticalAlignment="Center"
+                Background="White"
+                BorderThickness="1"
+                Click="emojiDeleteButton_Click"
+                Content="✖"
+                Foreground="Red">
+            </Button>
         </DataTemplate>
     </Window.Resources>
     <Grid>
@@ -158,12 +152,25 @@
                 ItemsSource="{Binding}">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn CellTemplate="{StaticResource EmojiLine}">
-                            <GridViewColumnHeader Content="Emoji" />
-                        </GridViewColumn>
+                        <GridViewColumn
+                            Width="30"
+                            CellTemplate="{StaticResource ResourceKey=EmojiImage}"
+                            Header="" />
+                        <GridViewColumn
+                            Width="150"
+                            DisplayMemberBinding="{Binding Path=Name}"
+                            Header="Name" />
+                        <GridViewColumn
+                            Width="150"
+                            DisplayMemberBinding="{Binding Path=Note}"
+                            Header="Note" />
+                        <GridViewColumn CellTemplate="{StaticResource ResourceKey=EmojiDeleteButton}" />
                     </GridView>
                 </ListView.View>
             </ListView>
+
+
+
 
             <Button
                 Grid.Row="1"
