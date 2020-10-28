@@ -190,7 +190,7 @@
                 Grid.Row="1"
                 Margin="5"
                 Click="ClearButton_Clicked"
-                Content="Clear" />
+                Content="Clear All" />
 
             <Button
                 Grid.Row="2"
