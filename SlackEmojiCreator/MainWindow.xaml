@@ -20,6 +20,13 @@
                 Source="{Binding Path=BitmapSource}">
             </Image>
         </DataTemplate>
+        <DataTemplate x:Key="EmojiName">
+            <TextBox
+                HorizontalAlignment="Left"
+                BorderThickness="0"
+                Text="{Binding Path=Name}">
+            </TextBox>
+        </DataTemplate>
         <DataTemplate x:Key="Note">
             <TextBlock
                 VerticalAlignment="Center"
@@ -165,7 +172,7 @@
                             Header="" />
                         <GridViewColumn
                             Width="150"
-                            DisplayMemberBinding="{Binding Path=Name}"
+                            CellTemplate="{StaticResource ResourceKey=EmojiName}"
                             Header="Name" />
                         <GridViewColumn
                             Width="150"
