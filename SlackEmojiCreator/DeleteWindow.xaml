@@ -40,6 +40,10 @@
                 Content="Update" />
             <Button
                 Height="50"
+                Click="SelectAllButton_Click"
+                Content="Select All" />
+            <Button
+                Height="50"
                 Click="DeleteButton_Click"
                 Content="Delete" />
             <Image x:Name="testImage" Height="225">

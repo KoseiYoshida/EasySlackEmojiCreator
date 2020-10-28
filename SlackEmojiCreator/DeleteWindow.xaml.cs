@@ -90,5 +90,12 @@ namespace SlackEmojiCreator.Delete
             Task.Run(() => Delete(deleteTargets)).ContinueWith(_ => UpdateList());
         }
 
+        private void SelectAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach(var emoji in emojiDatas)
+            {
+                emoji.Selected = true;
+            }
+        }
     }
 }
