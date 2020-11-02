@@ -62,31 +62,23 @@
 
             <StackPanel Grid.Row="0">
                 <Border
-                    Width="100"
+                    Width="180"
                     Height="100"
                     Margin="10"
                     HorizontalAlignment="Center"
                     BorderBrush="Black"
                     BorderThickness="2">
-                    <TextBlock>
-                        <Viewbox
-                            MaxWidth="100"
-                            MaxHeight="100"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top">
-                            <!--  &#xA;で改行  -->
-                            <TextBox
-                                x:Name="inputText"
-                                AcceptsReturn="True"
-                                BorderThickness="0"
-                                FontSize="30"
-                                GotFocus="inputText_GotFocus"
-                                PreviewKeyUp="inputText_PreviewKeyUp"
-                                Text="text&#xA;area"
-                                TextBlock.LineHeight="30"
-                                TextBlock.LineStackingStrategy="BlockLineHeight" />
-                        </Viewbox>
-                    </TextBlock>
+                    <!--  &#xA;で改行  -->
+                    <TextBox
+                        x:Name="inputText"
+                        AcceptsReturn="True"
+                        BorderThickness="0"
+                        FontSize="30"
+                        GotFocus="inputText_GotFocus"
+                        PreviewKeyUp="inputText_PreviewKeyUp"
+                        Text="text&#xA;area"
+                        TextBlock.LineHeight="25"
+                        TextBlock.LineStackingStrategy="BlockLineHeight" />
                 </Border>
 
 
@@ -132,6 +124,7 @@
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
 
+            <!--  改行コード &#xA;  -->
             <!--  ViewboxをそのままCaptureするとアスペクト比が変動するので、ダミーのTextBlockで囲む  -->
             <Border
                 Grid.Row="0"
@@ -139,9 +132,16 @@
                 Margin="5"
                 BorderBrush="Black"
                 BorderThickness="1">
-                <TextBlock x:Name="outputTextParent1">
-                    <Viewbox>
-                        <TextBlock x:Name="outputText1" />
+                <TextBlock
+                    x:Name="outputTextParent1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                    <Viewbox Stretch="Uniform">
+                        <TextBlock
+                            x:Name="outputText1"
+                            FontFamily="Impact"
+                            FontSize="20"
+                            Text="text&#xA;image" />
                     </Viewbox>
                 </TextBlock>
             </Border>

@@ -38,8 +38,8 @@ namespace SlackEmojiCreator
             // 参考:https://w3g.jp/sample/css/font-family
             fontFamilies = new string[3]
             {
-                "Sans-serif",
                 "Impact",
+                "Sans-serif",
                 "Monospace",
             };
 
