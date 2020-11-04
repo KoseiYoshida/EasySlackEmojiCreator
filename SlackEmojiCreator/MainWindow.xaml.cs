@@ -1,17 +1,15 @@
 ﻿using SlackEmojiCreator.Delete;
 using SlackEmojiCreator.Upload;
+using SlackEmojiCreator.Utility;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace SlackEmojiCreator
 {
@@ -93,27 +91,6 @@ namespace SlackEmojiCreator
             textBox.Foreground = new SolidColorBrush(color);
         }
 
-
-        private static BitmapSource CaptureFrameworkElement(FrameworkElement targetControl)
-        {
-            System.Windows.Point leftTopCorner = targetControl.PointToScreen(new System.Windows.Point(0f, 0f));
-            var width = targetControl.ActualWidth;
-            var height = targetControl.ActualHeight;
-            Rect targetRect = new Rect(leftTopCorner.X, leftTopCorner.Y, width, height);
-            BitmapSource bitmapSource;
-            using (var screenBitmap = new Bitmap((int)targetRect.Width, (int)targetRect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
-            {
-                using (var bitmapGraphics = Graphics.FromImage(screenBitmap))
-                {
-                    bitmapGraphics.CopyFromScreen((int)targetRect.X, (int)targetRect.Y, 0, 0, screenBitmap.Size);
-                    bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(screenBitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                }
-            }
-
-            return bitmapSource;
-        }
-
-
         private void AddButton_Clicked(object sender, RoutedEventArgs e)
         {
             var baseName = inputText.Text.Replace(" ", "").Replace("　", "");
@@ -125,7 +102,7 @@ namespace SlackEmojiCreator
 
             var name = baseName;
             name = name.ToLowerInvariant();
-            var bitmapSource = CaptureFrameworkElement(outputTextBoxParent);
+            var bitmapSource = ImageUtility.CaptureFrameworkElement(outputTextBoxParent);
 
             var data = new EmojiData() { Name = name, BitmapSource = bitmapSource};
             emojiDatas.Add(data);
@@ -139,7 +116,7 @@ namespace SlackEmojiCreator
             foreach (var emoji in emojiDatas)
             {
                 var name = emoji.Name;
-                byte[] imageArray = GetByteArray(emoji.BitmapSource);
+                byte[] imageArray = ImageUtility.GetByteArray(emoji.BitmapSource);
                 var uploadResult = Task.Run(() => uploader.UploadEmojiAsync(imageArray, name)).Result;
                 if (uploadResult.IsSucceeded)
                 {
@@ -159,23 +136,6 @@ namespace SlackEmojiCreator
             }
         }
 
-        private static byte[] GetByteArray(BitmapSource bitmapSource)
-        {
-            // TODO: 
-            byte[] imageArray;
-            var encoder = new PngBitmapEncoder();
-
-            encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-            using (var ms = new MemoryStream())
-            {
-                encoder.Save(ms);
-                // TODO: 非同期にする
-                imageArray = ms.ToArray();
-                //await ms.ReadAsync(imageArray, 0, (int)ms.Length);
-            }
-
-            return imageArray;
-        }
 
         private void ClearButton_Clicked(object sender, RoutedEventArgs e)
         {
