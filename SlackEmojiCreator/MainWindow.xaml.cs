@@ -94,12 +94,11 @@ namespace SlackEmojiCreator
         }
 
 
-        // TODO: Visualじゃなくて、Controlでいい？
-        private BitmapSource CaptureControl(Visual targetControl)
+        private static BitmapSource CaptureFrameworkElement(FrameworkElement targetControl)
         {
             System.Windows.Point leftTopCorner = targetControl.PointToScreen(new System.Windows.Point(0f, 0f));
-            var width = (targetControl as FrameworkElement).ActualWidth;
-            var height = (targetControl as FrameworkElement).ActualHeight;
+            var width = targetControl.ActualWidth;
+            var height = targetControl.ActualHeight;
             Rect targetRect = new Rect(leftTopCorner.X, leftTopCorner.Y, width, height);
             BitmapSource bitmapSource;
             using (var screenBitmap = new Bitmap((int)targetRect.Width, (int)targetRect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
@@ -126,7 +125,7 @@ namespace SlackEmojiCreator
 
             var name = baseName;
             name = name.ToLowerInvariant();
-            var bitmapSource = CaptureControl(outputTextBoxParent);
+            var bitmapSource = CaptureFrameworkElement(outputTextBoxParent);
 
             var data = new EmojiData() { Name = name, BitmapSource = bitmapSource};
             emojiDatas.Add(data);
@@ -160,7 +159,7 @@ namespace SlackEmojiCreator
             }
         }
 
-        private byte[] GetByteArray(BitmapSource bitmapSource)
+        private static byte[] GetByteArray(BitmapSource bitmapSource)
         {
             // TODO: 
             byte[] imageArray;
