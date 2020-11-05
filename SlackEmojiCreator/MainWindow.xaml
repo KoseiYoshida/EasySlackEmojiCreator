@@ -132,12 +132,12 @@
                 BorderBrush="Black"
                 BorderThickness="1">
                 <TextBlock
-                    x:Name="outputTextParent1"
+                    x:Name="outputTextCaptureParent"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
                     <Viewbox Stretch="Uniform">
                         <TextBlock
-                            x:Name="outputText1"
+                            x:Name="outputText"
                             FontFamily="Impact"
                             FontSize="20"
                             Text="text&#xA;image" />

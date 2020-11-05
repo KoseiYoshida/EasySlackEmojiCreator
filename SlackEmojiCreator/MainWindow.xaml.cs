@@ -22,16 +22,19 @@ namespace SlackEmojiCreator
 
         private readonly bool HasInitialized;
 
+        private readonly string[] fontFamilies;
+        private readonly SolidBrush[] brushes;
+
+        private TextImage textImage;
+
         public MainWindow()
         {
             InitializeComponent();
 
-            // 複数スレッドで使用されるコレクションへの参加
+            // 複数スレッドで使用されるコレクションの設定
             BindingOperations.EnableCollectionSynchronization(emojiDatas, new object());
-            
 
-            outputTextBlock = outputText1;
-            outputTextBoxParent = outputTextParent1;
+            textImage = new TextImage(outputText, outputTextCaptureParent);
 
             // 参考:https://w3g.jp/sample/css/font-family
             fontFamilies = new string[3]
@@ -64,7 +67,7 @@ namespace SlackEmojiCreator
 
             HasInitialized = true;
 
-            UpdateOutputTexts(inputText.Text);
+            textImage.UpdateOutputTexts(inputText.Text);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -72,28 +75,9 @@ namespace SlackEmojiCreator
             emojiListView.DataContext = emojiDatas;
         }
 
-        private readonly TextBlock outputTextBlock;
-
-        // Captureのために、決まった大きさのBoxを定義している
-        private readonly TextBlock outputTextBoxParent;        
-
-        private readonly string[] fontFamilies;
-        private readonly SolidBrush[] brushes;
-
-        private void UpdateOutputTexts(string sourceText)
-        {
-            var textBox = outputTextBlock;
-            textBox.Text = sourceText;
-            var fontfamilyString = fontFamilies[fontFamilyComboBox.SelectedIndex];
-            textBox.FontFamily = new System.Windows.Media.FontFamily(fontfamilyString);
-            var c = brushes[colorComboBox.SelectedIndex].Color;
-            var color = System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B);
-            textBox.Foreground = new SolidColorBrush(color);
-        }
-
         private void AddButton_Clicked(object sender, RoutedEventArgs e)
         {
-            var baseName = inputText.Text.Replace(" ", "").Replace("　", "");
+            var baseName = textImage.GetText().Replace(" ", "").Replace("　", "");
             baseName = baseName.Replace("\n", "").Replace("\r", "");
             if (baseName.Length < 1)
             {
@@ -102,7 +86,7 @@ namespace SlackEmojiCreator
 
             var name = baseName;
             name = name.ToLowerInvariant();
-            var bitmapSource = ImageUtility.CaptureFrameworkElement(outputTextBoxParent);
+            var bitmapSource = textImage.CaptureAsImage();
 
             var data = new EmojiData() { Name = name, BitmapSource = bitmapSource};
             emojiDatas.Add(data);
@@ -150,7 +134,8 @@ namespace SlackEmojiCreator
                 return;
             }
 
-            UpdateOutputTexts(inputText.Text);
+            textImage.FontFamily = new System.Windows.Media.FontFamily(fontFamilyComboBox.SelectedItem as string);
+            textImage.UpdateOutputTexts(inputText.Text);
         }
 
         private void colorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -159,8 +144,11 @@ namespace SlackEmojiCreator
             {
                 return;
             }
-
-            UpdateOutputTexts(inputText.Text);
+            
+            var c = brushes[colorComboBox.SelectedIndex].Color;
+            var color = System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B);
+            textImage.Color = color;
+            textImage.UpdateOutputTexts(inputText.Text);
         }
 
         private void AccountButton_Click(object sender, RoutedEventArgs e)
@@ -181,7 +169,7 @@ namespace SlackEmojiCreator
         private void inputText_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             var textbox = (sender as TextBox);
-            UpdateOutputTexts(textbox.Text);
+            textImage.UpdateOutputTexts(textbox.Text);
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
