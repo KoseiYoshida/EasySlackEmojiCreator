@@ -34,7 +34,7 @@ namespace SlackEmojiCreator
             // 複数スレッドで使用されるコレクションの設定
             BindingOperations.EnableCollectionSynchronization(emojiDatas, new object());
 
-            textImage = new TextImage(outputText, outputTextCaptureParent);
+            textImage = new TextImage(outputText, outputTextFrame);
 
             // 参考:https://w3g.jp/sample/css/font-family
             fontFamilies = new string[3]

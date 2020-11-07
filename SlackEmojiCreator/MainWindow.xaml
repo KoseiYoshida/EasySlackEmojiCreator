@@ -126,21 +126,28 @@
             <!--  改行コード &#xA;  -->
             <!--  ViewboxをそのままCaptureするとアスペクト比が変動するので、ダミーのTextBlockで囲む  -->
             <Border
+                x:Name="outputTextFrame"
                 Grid.Row="0"
                 Grid.Column="0"
                 Margin="5"
                 BorderBrush="Black"
                 BorderThickness="1">
+                <!--  Marginを考慮した枠のサイズ  -->
                 <TextBlock
-                    x:Name="outputTextCaptureParent"
+                    Width="390"
+                    Height="390"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-                    <Viewbox Stretch="Uniform">
+                    VerticalAlignment="Center"
+                    TextAlignment="Center">
+                    <Viewbox
+                        MaxWidth="390"
+                        MaxHeight="390"
+                        Stretch="Uniform">
                         <TextBlock
                             x:Name="outputText"
                             FontFamily="Impact"
                             FontSize="20"
-                            Text="text&#xA;image" />
+                            Text="k" />
                     </Viewbox>
                 </TextBlock>
             </Border>
