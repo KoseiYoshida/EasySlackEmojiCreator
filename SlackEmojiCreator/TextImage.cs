@@ -1,5 +1,6 @@
 ﻿using SlackEmojiCreator.Utility;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -53,10 +54,24 @@ namespace SlackEmojiCreator
         /// <summary>
         /// Capture text as image.
         /// </summary>
-        /// <returns>BitmapSource of captured image</returns>
-        public BitmapSource CaptureAsImage()
+        /// <param name="bitmapSource">Captured image</param>
+        /// <returns>True if capture succeeded.</returns>
+        /// <remarks><paramref name="bitmapSource"/> will be null if capture failed.</remarks>
+        public bool TryCaptureAsImage(out BitmapSource bitmapSource)
         {
-              return ImageUtility.CaptureFrameworkElement(captureElement);
+            bitmapSource = null;
+
+            try
+            {
+                bitmapSource = ImageUtility.CaptureFrameworkElement(captureElement);
+                return true;
+            }
+            catch(Exception ex)
+            {                
+                Console.WriteLine($"Capture failed. Error message : {ex.Message}");
+                return false;
+            }
+
         }
     }
 }

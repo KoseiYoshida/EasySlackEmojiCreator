@@ -67,7 +67,7 @@ namespace SlackEmojiCreator
 
             HasInitialized = true;
 
-            textImage.UpdateOutputTexts(inputText.Text);
+            textImage.UpdateText(inputText.Text);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -81,12 +81,20 @@ namespace SlackEmojiCreator
             baseName = baseName.Replace("\n", "").Replace("\r", "");
             if (baseName.Length < 1)
             {
+                // TODO: 失敗情報をユーザーに表示する
+                Console.WriteLine($"Failed to add image.");
                 return;
             }
 
             var name = baseName;
             name = name.ToLowerInvariant();
-            var bitmapSource = textImage.CaptureAsImage();
+
+            if(!textImage.TryCaptureAsImage(out var bitmapSource))
+            {
+                // TODO: 失敗情報をユーザーに表示する
+                Console.WriteLine($"Failed to add image. Cannot capture.");
+                return;
+            }
 
             var data = new EmojiData() { Name = name, BitmapSource = bitmapSource};
             emojiDatas.Add(data);
@@ -135,7 +143,7 @@ namespace SlackEmojiCreator
             }
 
             textImage.FontFamily = new System.Windows.Media.FontFamily(fontFamilyComboBox.SelectedItem as string);
-            textImage.UpdateOutputTexts(inputText.Text);
+            textImage.UpdateText(inputText.Text);
         }
 
         private void colorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -148,7 +156,7 @@ namespace SlackEmojiCreator
             var c = brushes[colorComboBox.SelectedIndex].Color;
             var color = System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B);
             textImage.Color = color;
-            textImage.UpdateOutputTexts(inputText.Text);
+            textImage.UpdateText(inputText.Text);
         }
 
         private void AccountButton_Click(object sender, RoutedEventArgs e)
@@ -169,7 +177,7 @@ namespace SlackEmojiCreator
         private void inputText_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             var textbox = (sender as TextBox);
-            textImage.UpdateOutputTexts(textbox.Text);
+            textImage.UpdateText(textbox.Text);
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
