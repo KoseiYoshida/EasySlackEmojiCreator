@@ -81,9 +81,7 @@ namespace SlackEmojiCreator.Utility
             using (var ms = new MemoryStream())
             {                
                 encoder.Save(ms);
-                // TODO: 非同期にする
                 imageArray = ms.ToArray();
-                //await ms.ReadAsync(imageArray, 0, (int)ms.Length);
             }
 
             return imageArray;

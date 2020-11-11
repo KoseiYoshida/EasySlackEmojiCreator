@@ -34,12 +34,11 @@ namespace SlackEmojiCreator.Delete
         {
             selectableEmojiListView.DataContext = emojiDatas;
 
-            Task.Run(() => UpdateList());
+            _ = UpdateList();
         }
 
         private async Task UpdateList()
         {
-            // TODO: プレビュー用の画像とってくる
             emojiInfoDict = await emojiListFetcher.GetUploadedEmojiInfoAsync();
 
             emojiDatas.Clear();
@@ -60,7 +59,8 @@ namespace SlackEmojiCreator.Delete
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            Task.Run(() => UpdateList());            
+            // TODO: Updateが完了するまではUIを触れなくする
+            _ = UpdateList();
         }
 
         private async Task Delete(string[] targetNames)
@@ -81,13 +81,14 @@ namespace SlackEmojiCreator.Delete
             }
         }
 
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             var deleteTargets = emojiDatas.Where(emoji => emoji.Selected == true)
                                                     .Select(emoji => emoji.Name)
                                                     .ToArray();
 
-            Task.Run(() => Delete(deleteTargets)).ContinueWith(_ => UpdateList());
+
+            await Delete(deleteTargets).ContinueWith(_ => UpdateList());
         }
 
         private void SelectAllButton_Click(object sender, RoutedEventArgs e)
