@@ -26,8 +26,8 @@ namespace SlackEmojiCreator.Utility
             }
 
             System.Windows.Point leftTopCorner = targetFrameworkElement.PointToScreen(new System.Windows.Point(0f, 0f));
-            var width = targetFrameworkElement.ActualWidth;
-            var height = targetFrameworkElement.ActualHeight;
+            var width = targetFrameworkElement.Width;
+            var height = targetFrameworkElement.Height;
             Rect targetRect = new Rect(leftTopCorner.X, leftTopCorner.Y, width, height);
 
             Bitmap screenBitmap;
