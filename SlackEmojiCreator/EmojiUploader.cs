@@ -23,7 +23,7 @@ namespace SlackEmojiCreator.Upload
         {
             { "error_bad_name_i18n", FailureReason.NameIsInvalid },
             { "error_name_taken", FailureReason.NameIsAlreadyExist },
-            { "error_name_taken_i18n", FailureReason.NameIsAlreadyExist },
+            { "error_name_taken_i18n", FailureReason.NameIsInvalid },
             { "error_missing_name", FailureReason.NameIsInvalid },
             { "error_no_image", FailureReason.ImageIsInvalid },
             { "error_bad_format", FailureReason.ImageIsInvalid },
