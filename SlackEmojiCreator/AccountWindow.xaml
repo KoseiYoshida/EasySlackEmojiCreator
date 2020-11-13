@@ -24,7 +24,7 @@
             <Button
                 x:Name="SaveButton"
                 Click="SaveButton_Click"
-                Content="保存" />
+                Content="Save" />
             <TextBlock
                 x:Name="resultTextBlock"
                 Width="300"
