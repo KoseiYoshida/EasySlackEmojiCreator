@@ -6,7 +6,7 @@
 
 # DEMO
 
-![demo](.\README_resources\demo.gif)
+![demo](https://github.com/KoseiYoshida/EasySlackEmojiCreator/blob/master/README_resources/demo.gif)
 
 
 
