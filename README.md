@@ -23,15 +23,17 @@ Prerequisites
 
 * Your computer must be running Windows 10
 
-* Install the latest version of [Visual Studio](https://developer.microsoft.com/en-us/windows/downloads) (the free community edition is sufficient) or other build tool.
+### Get application  
 
-* Get the code:
+* Download latest version from [release page](https://github.com/KoseiYoshida/EasySlackEmojiCreator/releases)  
 
-  * ```
-    git clone https://github.com/KoseiYoshida/EasySlackEmojiCreator.git
-    ```
+or
 
-* Open [SlackEmojiCreator.sln](https://github.com/KoseiYoshida/EasySlackEmojiCreator/blob/master/SlackEmojiCreator.sln) in Visual Studio to build and run the app.
+* Build application
+  * Install the latest version of [Visual Studio](https://developer.microsoft.com/en-us/windows/downloads) (the free community edition is sufficient) or other build tool.
+  * Get the code:
+    * git clone https://github.com/KoseiYoshida/EasySlackEmojiCreator.git
+  * Open [SlackEmojiCreator.sln](https://github.com/KoseiYoshida/EasySlackEmojiCreator/blob/master/SlackEmojiCreator.sln) in Visual Studio to build and run the app.
 
 ### Get token  
 
