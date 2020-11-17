@@ -22,6 +22,8 @@
 Prerequisites
 
 * Your computer must be running Windows 10
+* .NET Core 3.0 Runtime (or later) is installed 
+  * If it's not installed, you will be required when you open the .exe file.
 
 ### Get application  
 
