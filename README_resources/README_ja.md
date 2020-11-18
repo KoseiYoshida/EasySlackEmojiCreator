@@ -6,7 +6,7 @@
 
 # DEMO
 
-![demo](/demo.gif)
+![demo](./demo.gif)
 
 
 
