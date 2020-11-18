@@ -12,8 +12,10 @@
 
 # Features
 
-* You can create slack emojis easily.
-* Once you register your slack team token, you can add created emoji just by push button. (You need to register you token again when you signed out.)
+* You can create slack emojis by just typing text.
+* Add created emoji to your workspace just by pushing button, once you register your slack team token
+  * It's not necessary to open your workspace customize web page to upload.
+  * You need to register you token again when you signed out.
 
 
 
