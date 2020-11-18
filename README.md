@@ -1,3 +1,5 @@
+[日本語版README](/README_resources/README_ja.md)
+
 # EasySlackEmojiCreator
 
 "EasySlackEmojiCreator" enable to create slack emojis and upload them quickly.
