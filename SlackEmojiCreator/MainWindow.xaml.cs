@@ -100,10 +100,9 @@ namespace SlackEmojiCreator
             emojiDatas.Add(data);
         }
 
-        // TODO: アップロード終了したものから消す、失敗したものからその理由を表示する（非同期化）
         private void UploadButton_Clicked(object sender, RoutedEventArgs e)
         {
-            var uploader = new EmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
+            using var uploader = new EmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
 
             List<EmojiData> succeededEmojis = new List<EmojiData>(emojiDatas.Count);
             foreach (var emoji in emojiDatas)
@@ -121,7 +120,7 @@ namespace SlackEmojiCreator
                     emoji.Note = $"Failed : {uploadResult.FailureReason}";
                     emoji.NoteColor = new SolidColorBrush(Colors.Red);
                 }
-            }
+            }            
            
             foreach (var emoji in succeededEmojis)
             {

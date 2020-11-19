@@ -49,7 +49,7 @@ namespace SlackEmojiCreator.Upload
         private readonly string token;
         private readonly Uri uri;
 
-        private HttpClient client;
+        private static HttpClient client;
 
 
         /// <summary>
@@ -106,7 +106,6 @@ namespace SlackEmojiCreator.Upload
             return await UploadEmojiAsync(imageBytes, fileName);
         }
 
-        // TODO: ドキュメントコメント書く
         /// <summary>
         /// Upload byte array as emoji.
         /// </summary>
