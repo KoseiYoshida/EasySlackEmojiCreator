@@ -102,6 +102,16 @@ namespace SlackEmojiCreator
 
         private void UploadButton_Clicked(object sender, RoutedEventArgs e)
         {
+            var workspace = Properties.Settings.Default.Workspace;
+            var token = Properties.Settings.Default.EmojiAddToken;
+
+            if(string.IsNullOrWhiteSpace(workspace) || string.IsNullOrWhiteSpace(token))
+            {
+                MessageBox.Show($"Please enter one or both of the Workspace and Token from \"Account\".", null, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+
             using var uploader = new EmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
 
             List<EmojiData> succeededEmojis = new List<EmojiData>(emojiDatas.Count);
@@ -126,7 +136,7 @@ namespace SlackEmojiCreator
             {
                 emojiDatas.Remove(emoji);
             }
-        }
+        }        
 
 
         private void ClearButton_Clicked(object sender, RoutedEventArgs e)

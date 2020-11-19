@@ -30,13 +30,6 @@ namespace SlackEmojiCreator
         // TODO: Tokenが有効かどうかのチェックいれる。
         private void SaveSetting()
         {
-
-            if (string.IsNullOrEmpty(workspaceName.Text))
-            {
-                UpdateResultMessage("Please enter workspace name.");
-                return;
-            }
-
             var defaultSetting = Properties.Settings.Default;
             defaultSetting.Workspace = workspaceName.Text;
             defaultSetting.EmojiListToken = emojiListToken.Text;
