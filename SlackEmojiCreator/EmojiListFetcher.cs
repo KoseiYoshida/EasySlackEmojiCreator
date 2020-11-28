@@ -113,12 +113,12 @@ namespace SlackEmojiCreator
             catch (JsonReaderException ex)
             {
                 Console.WriteLine($"Failed to parse json. {ex}");
-                throw ex;
+                throw;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Failed to get emoji list. {ex}");
-                throw ex;
+                throw;
             }
 
         }
