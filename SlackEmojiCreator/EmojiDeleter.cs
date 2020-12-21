@@ -41,7 +41,6 @@ namespace SlackEmojiCreator
         {
             var uri = GetEmojiRemoveUri();
 
-            HttpClient client = new HttpClient();
             MultipartFormDataContent content = new MultipartFormDataContent();
             content.Add(new StringContent(token), "token");
             content.Add(new StringContent(emojiName), "name");

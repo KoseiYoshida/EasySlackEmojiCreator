@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace SlackEmojiCreator.Upload
 {
+    // TODO: IDisposable不要
     public sealed class EmojiUploader : IDisposable
     {
         private static readonly string UrlAddBase = "https://{0}.slack.com/api/emoji.add";
@@ -49,7 +50,8 @@ namespace SlackEmojiCreator.Upload
         private readonly string token;
         private readonly Uri uri;
 
-        private static HttpClient client;
+        // HttpClientは一つのインスタンスを使いまわす。
+        private static HttpClient client = new HttpClient();
 
 
         /// <summary>
@@ -74,7 +76,6 @@ namespace SlackEmojiCreator.Upload
             this.workspace = workspace;
             this.token = token;
             this.uri = new Uri(string.Format(UrlAddBase, this.workspace) + "?token=" + this.token);
-            client = new HttpClient();
         }
 
         /// <summary>

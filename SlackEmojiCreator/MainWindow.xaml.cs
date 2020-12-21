@@ -119,6 +119,8 @@ namespace SlackEmojiCreator
             {
                 var name = emoji.Name;
                 byte[] imageArray = ImageUtility.GetByteArray(emoji.BitmapSource);
+
+                // TODO: 非同期なのに一つずつ結果待ちしてるの意味ないかも？？
                 var uploadResult = Task.Run(() => uploader.UploadEmojiAsync(imageArray, name)).Result;
                 if (uploadResult.IsSucceeded)
                 {
