@@ -77,6 +77,7 @@ namespace SlackEmojiCreator.Delete
             var deleter = new EmojiDeleter(workspace, token);
             foreach(var name in targetNames)
             {
+                // TODO: 一つ一つawaitする意味ある？
                 await deleter.DeleteAsync(name);
             }
         }
