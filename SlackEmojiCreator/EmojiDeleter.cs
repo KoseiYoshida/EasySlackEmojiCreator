@@ -46,8 +46,15 @@ namespace SlackEmojiCreator
         /// </summary>
         /// <param name="emojiName">Name of delete target</param>
         /// <returns></returns>
+        /// <exception cref="ArgumentException">Throw if <paramref name="emojiName"/> is null or empty.</exception>
+        /// <exception cref="HttpRequestException">Throw if http request error occurred.</exception>
         public async Task DeleteAsync(string emojiName)
         {
+            if (string.IsNullOrEmpty(emojiName))
+            {
+                throw new ArgumentException($"{nameof(emojiName)} is null or empty.");
+            }
+
             MultipartFormDataContent content = new MultipartFormDataContent();
             content.Add(new StringContent(token), "token");
             content.Add(new StringContent(emojiName), "name");
@@ -63,7 +70,6 @@ namespace SlackEmojiCreator
             catch(HttpRequestException ex)
             {
                 Console.WriteLine($"Request error occurred. {ex.Message}, Emoji:{emojiName},  URI:{uri}, Token:{token}");
-                // TODO: 例外発生時のエラー処理を書く。
                 throw;                
             }
             catch (Exception ex)

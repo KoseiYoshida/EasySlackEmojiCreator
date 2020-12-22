@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using Math = Utility.Math;
 
 namespace SlackEmojiCreator.Delete
 {
@@ -46,14 +48,7 @@ namespace SlackEmojiCreator.Delete
             foreach ((var name, var imageUri) in emojiInfoDict)
             {                    
                 var data = new SelectableEmojiData() { Name = name, Selected = false, ThumnailUri = imageUri };
-                try
-                {
-                    emojiDatas.Add(data);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"{ex}");
-                }
+                emojiDatas.Add(data);
             }
         }
 
@@ -68,17 +63,32 @@ namespace SlackEmojiCreator.Delete
             var workspace = Properties.Settings.Default.Workspace;
             var token = Properties.Settings.Default.EmojiRemoveToken;
 
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                Console.WriteLine($"No token");
-                throw new ArgumentNullException($"");
+            var deleter = new EmojiDeleter(workspace, token);
+            List<string> failed = new List<string>((int)Math.NextPow2(targetNames.Length));
+            foreach(var name in targetNames)
+            {                
+                try
+                {
+                    // TODO: 一つ一つawaitする意味ある？Parallel? WhenAll?
+                    await deleter.DeleteAsync(name);
+                }
+                catch(System.Net.Http.HttpRequestException ex)
+                {
+                    Console.WriteLine($"Failed to delete. Emoji : {name}, {ex.Message}");
+                    failed.Add(name);
+                }
             }
 
-            var deleter = new EmojiDeleter(workspace, token);
-            foreach(var name in targetNames)
+            // 削除に失敗したものをユーザーに表示
+            if(failed.Count > 0)
             {
-                // TODO: 一つ一つawaitする意味ある？
-                await deleter.DeleteAsync(name);
+                var stringBuilder = new StringBuilder();
+                foreach(var name in failed)
+                {
+                    stringBuilder.Append($"\n");
+                    stringBuilder.Append(name);
+                }
+                MessageBox.Show($"Failed to upload below. {stringBuilder.ToString()}", "", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
