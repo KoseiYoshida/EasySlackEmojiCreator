@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackEmojiCreator", "SlackEmojiCreator\SlackEmojiCreator.csproj", "{A3BFEAD9-D583-4873-9D5F-5A8DB750CE4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackEmojiCreator", "SlackEmojiCreator\SlackEmojiCreator.csproj", "{A3BFEAD9-D583-4873-9D5F-5A8DB750CE4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utility", "Utility\Utility.csproj", "{B869E980-3303-4FF2-87E3-6681D914B331}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A3BFEAD9-D583-4873-9D5F-5A8DB750CE4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3BFEAD9-D583-4873-9D5F-5A8DB750CE4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3BFEAD9-D583-4873-9D5F-5A8DB750CE4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B869E980-3303-4FF2-87E3-6681D914B331}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B869E980-3303-4FF2-87E3-6681D914B331}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B869E980-3303-4FF2-87E3-6681D914B331}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B869E980-3303-4FF2-87E3-6681D914B331}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
