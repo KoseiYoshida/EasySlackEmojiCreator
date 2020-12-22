@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace SlackEmojiCreator
+namespace SlackEmojiCreator.Delete
 {
     // TODO: IDisposableの使い方修正
     public sealed class EmojiDeleter : IDisposable
