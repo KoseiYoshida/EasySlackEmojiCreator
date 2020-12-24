@@ -3,10 +3,10 @@
     public static class Math
     {
         /// <summary>
-        /// Calculate a number which is the minimum in the power of two numbers more than <paramref name="n"/>.
+        /// Calculate a number which is the minimum among the power of two numbers more than <paramref name="n"/>.
         /// </summary>
         /// <param name="n">Number of the minimum</param>
-        /// <returns>Number which is the minimum in the power of two numbers more than <paramref name="n"/></returns>
+        /// <returns>Number which is the minimum among the power of two numbers more than <paramref name="n"/></returns>
         public static uint NextPow2(int n)
         {
             // nが0以下の時は0とする。
