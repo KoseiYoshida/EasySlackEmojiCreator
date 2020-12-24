@@ -28,18 +28,9 @@ namespace SlackEmojiCreator.Utility
             System.Windows.Point leftTopCorner = targetFrameworkElement.PointToScreen(new System.Windows.Point(0f, 0f));
             var width = targetFrameworkElement.Width;
             var height = targetFrameworkElement.Height;
-            Rect targetRect = new Rect(leftTopCorner.X, leftTopCorner.Y, width, height);
+            var targetRect = new Rect(leftTopCorner.X, leftTopCorner.Y, width, height);
 
-            Bitmap screenBitmap;
-            try
-            {
-                screenBitmap = new Bitmap((int)targetRect.Width, (int)targetRect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine($"Failed to create new bitmap. Error Message:{ex.Message}, Framework Element:{targetFrameworkElement.Name}, Width:{(int)targetRect.Width}, Height:{(int)targetRect.Height}");
-                throw;
-            }
+            var screenBitmap = new Bitmap((int)targetRect.Width, (int)targetRect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
             try
             {
