@@ -7,11 +7,19 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace SlackEmojiCreator
+namespace SlackEmojiCreator.Fetch
 {
+    /// <summary>
+    /// Fetch emojis.
+    /// </summary>
     public sealed class EmojiListFetcher
     {
-        private static string[] SlackDefaultEmojiNames = new string[]
+        private const string UrlListBase = "https://{0}.slack.com/api/emoji.list";
+
+        /// <summary>
+        /// Default registered emoji names.
+        /// </summary>
+        private readonly static string[] SlackDefaultEmojiNames = new string[]
         {
                     "bowtie",
                     "squirrel",
@@ -29,31 +37,33 @@ namespace SlackEmojiCreator
                     "simple_smile",
         };
 
-        private const string UrlListBase = "https://{0}.slack.com/api/emoji.list";
-        private Uri GetEmojiListUri()
-        {
-            if (string.IsNullOrWhiteSpace(this.workspace))
-            {
-                throw new Exception($"workspace is null or empty.");
-            }
+        private readonly string workspace;
+        private readonly string token;
+        private readonly Uri uri;
 
-            if (string.IsNullOrEmpty(this.token))
-            {
-                throw new Exception($"Token is null or empty.");
-            }
-
-            return new Uri(string.Format(UrlListBase, this.workspace) + "?token=" + this.token);
-        }
-
-        private string workspace;
-        private string token;
-
+        /// <summary>
+        /// Constuctor.
+        /// </summary>
+        /// <param name="workspace">Name of slack workspace</param>
+        /// <param name="token">Token for deleting</param>
+        /// <exception cref="ArgumentException">Throw if <paramref name="workspace"/> is null or empty.</exception>
+        /// <exception cref="ArgumentException">Throw if <paramref name="token"/> is null or empty.</exception>
         public EmojiListFetcher(string workspace, string token)
         {
+            if (string.IsNullOrWhiteSpace(workspace))
+            {
+                throw new ArgumentException($"workspace is null or empty.");
+            }
+
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentException($"token is null or empty.");
+            }
+
             this.workspace = workspace;
             this.token = token;
+            this.uri = new Uri(string.Format(UrlListBase, this.workspace) + "?token=" + this.token);
         }
-
 
         /// <summary>
         /// Get original emoji names in workspace;
@@ -63,27 +73,19 @@ namespace SlackEmojiCreator
         /// <remarks>
         /// API details <seealso cref="https://api.slack.com/methods/emoji.list"/>
         /// </remarks>
+        /// <exception cref="JsonReaderException">Throw if parsing response json is failed.</exception>
         public async Task<Dictionary<string, Uri>> GetUploadedEmojiInfoAsync()
         {
             var emojiDict = new Dictionary<string, Uri>();
 
-            var emojiListUri = GetEmojiListUri();
-            var request = WebRequest.CreateHttp(emojiListUri);
+            var request = WebRequest.CreateHttp(this.uri);
             request.Method = "GET";
 
             string jsonString;
-            try
-            {
-                using var response = await request.GetResponseAsync();
-                using var stream = response.GetResponseStream();
-                using var reader = new StreamReader(stream);
-                jsonString = await reader.ReadToEndAsync();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine($"Failed to get response json. {ex} workspace:{workspace}, token:{token}");
-                throw ex;
-            }
+            using var response = await request.GetResponseAsync();
+            using var stream = response.GetResponseStream();
+            using var reader = new StreamReader(stream);
+            jsonString = await reader.ReadToEndAsync();
 
             try
             {
@@ -112,12 +114,7 @@ namespace SlackEmojiCreator
             }
             catch (JsonReaderException ex)
             {
-                Console.WriteLine($"Failed to parse json. {ex}");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to get emoji list. {ex}");
+                Console.WriteLine($"Failed to parse json. {ex.Message}");
                 throw;
             }
 

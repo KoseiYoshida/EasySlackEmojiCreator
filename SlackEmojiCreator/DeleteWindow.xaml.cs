@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlackEmojiCreator.Fetch;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -41,7 +42,16 @@ namespace SlackEmojiCreator.Delete
 
         private async Task UpdateList()
         {
-            emojiInfoDict = await emojiListFetcher.GetUploadedEmojiInfoAsync();
+            try
+            {
+                emojiInfoDict = await emojiListFetcher.GetUploadedEmojiInfoAsync();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Failed to get emoji list. Message:{ex.Message}");
+                MessageBox.Show($"Failed to get emoji list.", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             emojiDatas.Clear();
 

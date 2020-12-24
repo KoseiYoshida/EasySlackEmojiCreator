@@ -18,7 +18,7 @@ namespace SlackEmojiCreator.Delete
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="workspace">Workspace name</param>
+        /// <param name="workspace">Name of slack workspace</param>
         /// <param name="token">Token for deleting</param>
         /// <exception cref="ArgumentException">Throw if <paramref name="workspace"/> is null or empty.</exception>
         /// <exception cref="ArgumentException">Throw if <paramref name="token"/> is null or empty.</exception>
