@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlackAPI.Exception;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -48,6 +49,7 @@ namespace SlackAPI.Delete
         /// <returns></returns>
         /// <exception cref="ArgumentException">Throw if <paramref name="emojiName"/> is null or empty.</exception>
         /// <exception cref="HttpRequestException">Throw if http request error occurred.</exception>
+        /// <exception cref="SlackAPIException">Throw if some kind of error occurred when using Slack API.</exception>
         public async Task DeleteAsync(string emojiName)
         {
             if (string.IsNullOrEmpty(emojiName))
@@ -72,10 +74,10 @@ namespace SlackAPI.Delete
                 Console.WriteLine($"Request error occurred. {ex.Message}, Emoji:{emojiName},  URI:{uri}, Token:{token}");
                 throw;                
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Console.WriteLine($"An error occurred. {ex.Message}, Emoji:{emojiName},  URI:{uri}, Token:{token}");
-                throw;
+                throw new SlackAPIException($"An error occurred when deleting {emojiName};", ex);
             }
         }
 

@@ -85,7 +85,12 @@ namespace SlackEmojiCreator.Delete
                 }
                 catch(System.Net.Http.HttpRequestException ex)
                 {
-                    Console.WriteLine($"Failed to delete. Emoji : {name}, {ex.Message}");
+                    Console.WriteLine($"Failed to send request. Emoji : {name}, {ex.Message}");
+                    failed.Add(name);
+                }
+                catch (SlackAPI.Exception.SlackAPIException ex)
+                {
+                    Console.WriteLine($"Some kind of error occurred by using Slack API.", ex.Message);
                     failed.Add(name);
                 }
             }
