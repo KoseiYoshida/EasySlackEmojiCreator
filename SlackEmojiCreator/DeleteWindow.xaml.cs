@@ -1,4 +1,5 @@
-﻿using SlackEmojiCreator.Fetch;
+﻿using SlackAPI.Fetch;
+using SlackAPI.Delete;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

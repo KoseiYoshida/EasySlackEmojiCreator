@@ -4,6 +4,9 @@ using System.Windows;
 
 namespace SlackEmojiCreator.Delete
 {
+    /// <summary>
+    /// Selectable emoji data.
+    /// </summary>
     public sealed class SelectableEmojiData : INotifyPropertyChanged
     {
         public string Name { get; set; } = "";

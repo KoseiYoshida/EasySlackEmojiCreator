@@ -1,4 +1,4 @@
-﻿namespace SlackEmojiCreator.Upload
+﻿namespace SlackAPI.Upload
 {
     public sealed class UploadResult
     {

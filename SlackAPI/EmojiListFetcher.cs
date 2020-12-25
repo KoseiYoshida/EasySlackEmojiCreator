@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace SlackEmojiCreator.Fetch
+namespace SlackAPI.Fetch
 {
     /// <summary>
     /// Fetch emojis.

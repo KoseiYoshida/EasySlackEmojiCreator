@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace SlackEmojiCreator.Upload
+namespace SlackAPI.Upload
 {
     // TODO: IDisposable不要
     public sealed class EmojiUploader : IDisposable
