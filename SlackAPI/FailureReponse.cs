@@ -1,7 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SlackEmojiCreator.Upload
+namespace SlackAPI.Upload
 {
+    /// <summary>
+    /// Response of failured emoji upload.
+    /// </summary>
+    /// <remarks>See details at <see cref="https://api.slack.com/methods/admin.emoji.add"/></remarks>
     public sealed class FailureResponse
     {
         [JsonPropertyName("ok")]
