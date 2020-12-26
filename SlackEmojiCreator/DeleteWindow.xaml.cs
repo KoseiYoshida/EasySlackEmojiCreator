@@ -47,7 +47,7 @@ namespace SlackEmojiCreator.Delete
             {
                 emojiInfoDict = await emojiListFetcher.GetUploadedEmojiInfoAsync();
             }
-            catch(Exception ex)
+            catch(SlackAPI.Exception.SlackAPIException ex)
             {
                 Console.WriteLine($"Failed to get emoji list. Message:{ex.Message}");
                 MessageBox.Show($"Failed to get emoji list.", "", MessageBoxButton.OK, MessageBoxImage.Error);

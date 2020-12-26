@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SlackAPI.Exception;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -73,7 +74,7 @@ namespace SlackAPI.Fetch
         /// <remarks>
         /// API details <seealso cref="https://api.slack.com/methods/emoji.list"/>
         /// </remarks>
-        /// <exception cref="JsonReaderException">Throw if parsing response json is failed.</exception>
+        /// <exception cref="SlackAPIException">Throw if any errors occurred.</exception>
         public async Task<Dictionary<string, Uri>> GetUploadedEmojiInfoAsync()
         {
             var emojiDict = new Dictionary<string, Uri>();
@@ -90,11 +91,13 @@ namespace SlackAPI.Fetch
             try
             {
                 JObject jsonObject = JObject.Parse(jsonString);
-                if (!(bool)jsonObject["ok"])
+
+                var wasValidRequest = (bool)jsonObject["ok"];
+                if (!wasValidRequest)
                 {
                     var errorMsg = jsonObject["error"].ToString();
-                    Console.WriteLine($"Invalid request. reason : {errorMsg}, workspace:{workspace}, token:{token}");
-                    throw new Exception($"{errorMsg}");
+                    Console.WriteLine($"Request was invalid. reason : {errorMsg}, workspace:{workspace}, token:{token}");
+                    throw new SlackAPIException(errorMsg);
                 }
 
 
@@ -115,7 +118,11 @@ namespace SlackAPI.Fetch
             catch (JsonReaderException ex)
             {
                 Console.WriteLine($"Failed to parse json. {ex.Message}");
-                throw;
+                throw new SlackAPIException($"Parsing json failed.", ex);
+            }
+            catch(System.Exception ex)
+            {
+                throw new SlackAPIException($"An error occurred while parsing response.", ex);
             }
 
         }
