@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SlackAPI.Net;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,8 +9,7 @@ using System.Threading.Tasks;
 
 namespace SlackAPI.Upload
 {
-    // TODO: IDisposable不要
-    public sealed class EmojiUploader : IDisposable
+    public sealed class EmojiUploader
     {
         private static readonly string UrlAddBase = "https://{0}.slack.com/api/emoji.add";
         private static readonly string[] AvailableExtensions = new string[4]
@@ -19,6 +19,7 @@ namespace SlackAPI.Upload
             ".jpeg",
             ".gif"
         };
+
         // Failure reason for upload request. See https://api.slack.com/methods/admin.emoji.add
         private static readonly Dictionary<string, FailureReason> failureReasonDict = new Dictionary<string, FailureReason>()
         {
@@ -49,9 +50,6 @@ namespace SlackAPI.Upload
         private readonly string workspace;
         private readonly string token;
         private readonly Uri uri;
-
-        // HttpClientは一つのインスタンスを使いまわす。
-        private static HttpClient client = new HttpClient();
 
 
         /// <summary>
@@ -133,7 +131,7 @@ namespace SlackAPI.Upload
 
             try
             {
-                var msg = await client.PostAsync(uri, content);
+                var msg = await HttpClientHolder.Client.PostAsync(uri, content);
 
                 // HttpResponseMessage.Status will be "ok" even if  the post failed. Check the responseContent
                 var responseContent = await msg.Content.ReadAsStringAsync();
@@ -163,14 +161,6 @@ namespace SlackAPI.Upload
                 Console.WriteLine($"error : {ex}");
                 return new UploadResult(false, FailureReason.RequestError);
             }
-        }
-
-        /// <summary>
-        /// Implementation of <see cref="IDisposable"/>
-        /// </summary>
-        public void Dispose()
-        {
-            client.Dispose();
         }
     }
 }
