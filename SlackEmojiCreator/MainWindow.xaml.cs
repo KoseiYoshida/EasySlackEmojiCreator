@@ -111,8 +111,7 @@ namespace SlackEmojiCreator
                 return;
             }
 
-
-            using var uploader = new EmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
+            var uploader = new EmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
 
             List<EmojiData> succeededEmojis = new List<EmojiData>(emojiDatas.Count);
             foreach (var emoji in emojiDatas)

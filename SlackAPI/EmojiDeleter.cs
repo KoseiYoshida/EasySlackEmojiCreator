@@ -1,4 +1,5 @@
 ﻿using SlackAPI.Exception;
+using SlackAPI.Net;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -6,11 +7,9 @@ using System.Threading.Tasks;
 namespace SlackAPI.Delete
 {
     // TODO: IDisposableの使い方修正
-    public sealed class EmojiDeleter : IDisposable
+    public sealed class EmojiDeleter
     {
         private const string UrlRemoveBase = "https://{0}.slack.com/api/emoji.remove";
-
-        private HttpClient client = new HttpClient();
 
         private readonly string workspace;
         private readonly string token;
@@ -65,7 +64,7 @@ namespace SlackAPI.Delete
 
             try
             {
-                using HttpResponseMessage msg = await client.PostAsync(this.uri, content);
+                using HttpResponseMessage msg = await HttpClientHolder.Client.PostAsync(this.uri, content);
                 var message = await msg.Content.ReadAsStringAsync();
                 Console.WriteLine($"response : {message}");
             }
@@ -79,11 +78,6 @@ namespace SlackAPI.Delete
                 Console.WriteLine($"An error occurred. {ex.Message}, Emoji:{emojiName},  URI:{uri}, Token:{token}");
                 throw new SlackAPIException($"An error occurred when deleting {emojiName};", ex);
             }
-        }
-
-        public void Dispose()
-        {
-            client.Dispose();
         }
     }
 }
