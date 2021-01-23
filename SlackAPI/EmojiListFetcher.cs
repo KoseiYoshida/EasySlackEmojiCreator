@@ -1,11 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SlackAPI.Exception;
+using SlackAPI.Net;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace SlackAPI.Fetch
@@ -79,14 +78,7 @@ namespace SlackAPI.Fetch
         {
             var emojiDict = new Dictionary<string, Uri>();
 
-            var request = WebRequest.CreateHttp(this.uri);
-            request.Method = "GET";
-
-            string jsonString;
-            using var response = await request.GetResponseAsync();
-            using var stream = response.GetResponseStream();
-            using var reader = new StreamReader(stream);
-            jsonString = await reader.ReadToEndAsync();
+            string jsonString = await HttpClientHolder.Client.GetStringAsync(this.uri);
 
             try
             {
