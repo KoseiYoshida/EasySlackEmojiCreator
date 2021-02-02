@@ -10,7 +10,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackEmojiCreator", "SlackE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility", "Utility\Utility.csproj", "{B869E980-3303-4FF2-87E3-6681D914B331}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlackAPI", "SlackAPI\SlackAPI.csproj", "{003CC710-6375-404D-B811-83F0F02F9A7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackAPI", "SlackAPI\SlackAPI.csproj", "{003CC710-6375-404D-B811-83F0F02F9A7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
