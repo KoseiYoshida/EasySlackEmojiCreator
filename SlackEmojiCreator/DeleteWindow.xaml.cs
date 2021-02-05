@@ -1,6 +1,7 @@
 ﻿using SlackAPI.Fetch;
 using SlackAPI.Delete;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -8,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using Math = Utility.Math;
 
 namespace SlackEmojiCreator.Delete
 {
@@ -38,10 +38,10 @@ namespace SlackEmojiCreator.Delete
         {
             selectableEmojiListView.DataContext = emojiDatas;
 
-            _ = UpdateList();
+            _ = UpdateListAsync();
         }
 
-        private async Task UpdateList()
+        private async Task UpdateListAsync()
         {
             try
             {
@@ -66,45 +66,54 @@ namespace SlackEmojiCreator.Delete
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
             // TODO: Updateが完了するまではUIを触れなくする
-            _ = UpdateList();
+            _ = UpdateListAsync();
         }
 
-        private async Task Delete(string[] targetNames)
+        private async Task DeleteAsync(string[] targetNames)
         {
             var workspace = Properties.Settings.Default.Workspace;
             var token = Properties.Settings.Default.EmojiRemoveToken;
 
             var deleter = new EmojiDeleter(workspace, token);
-            List<string> failed = new List<string>((int)Math.NextPow2(targetNames.Length));
-            foreach(var name in targetNames)
-            {                
-                try
+            // List<string> failed = new List<string>((int)Math.NextPow2(targetNames.Length));
+            ConcurrentBag<string> failed = new ConcurrentBag<string>();
+
+            await Task.Run(() =>
+            {
+                Parallel.ForEach(targetNames, async (name) =>
                 {
-                    // TODO: 一つ一つawaitする意味ある？Parallel? WhenAll?
-                    await deleter.DeleteAsync(name);
+                    try
+                    {
+                        await deleter.DeleteAsync(name);
+                    }
+                    catch (System.Net.Http.HttpRequestException ex)
+                    {
+                        Console.WriteLine($"Failed to send request. Emoji : {name}, {ex.Message}");
+                        failed.Add(name);
+                    }
+                    catch (SlackAPI.Exception.SlackAPIException ex)
+                    {
+                        Console.WriteLine($"Some kind of error occurred by using Slack API.", ex.Message);
+                        failed.Add(name);
+                    }
                 }
-                catch(System.Net.Http.HttpRequestException ex)
-                {
-                    Console.WriteLine($"Failed to send request. Emoji : {name}, {ex.Message}");
-                    failed.Add(name);
-                }
-                catch (SlackAPI.Exception.SlackAPIException ex)
-                {
-                    Console.WriteLine($"Some kind of error occurred by using Slack API.", ex.Message);
-                    failed.Add(name);
-                }
-            }
+                );
+            });
 
             // 削除に失敗したものをユーザーに表示
-            if(failed.Count > 0)
+            if (failed.Count > 0)
             {
                 var stringBuilder = new StringBuilder();
-                foreach(var name in failed)
+                foreach (var name in failed)
                 {
                     stringBuilder.Append($"\n");
                     stringBuilder.Append(name);
                 }
-                MessageBox.Show($"Failed to upload below. {stringBuilder.ToString()}", "", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                Dispatcher.Invoke(() => 
+                {
+                    MessageBox.Show($"Failed to upload below. {stringBuilder.ToString()}", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                });
             }
         }
 
@@ -114,8 +123,9 @@ namespace SlackEmojiCreator.Delete
                                                     .Select(emoji => emoji.Name)
                                                     .ToArray();
 
+            await DeleteAsync(deleteTargets);
 
-            await Delete(deleteTargets).ContinueWith(_ => UpdateList());
+            _ = UpdateListAsync();
         }
 
         private void SelectAllButton_Click(object sender, RoutedEventArgs e)

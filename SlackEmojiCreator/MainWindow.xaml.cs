@@ -100,15 +100,33 @@ namespace SlackEmojiCreator
             emojiDatas.Add(data);
         }
 
-        private void UploadButton_Clicked(object sender, RoutedEventArgs e)
+        private async void UploadButton_Clicked(object sender, RoutedEventArgs e)
         {
             var workspace = Properties.Settings.Default.Workspace;
             var token = Properties.Settings.Default.EmojiAddToken;
 
-            if(string.IsNullOrWhiteSpace(workspace) || string.IsNullOrWhiteSpace(token))
+            if (string.IsNullOrWhiteSpace(workspace) || string.IsNullOrWhiteSpace(token))
             {
                 MessageBox.Show($"Please enter one or both of the Workspace and Token from \"Account\".", null, MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
+
+            var succeededEmojis = await UploadEmojisAsync(workspace, token);
+            var delayBeforeClearTime = 1000;
+            await Task.Delay(delayBeforeClearTime);
+
+            foreach (var emoji in succeededEmojis)
+            {
+                emojiDatas.Remove(emoji);
+            }
+        }
+
+        private async Task<ReadOnlyCollection<EmojiData>> UploadEmojisAsync(string workspace, string token)
+        {
+            if (string.IsNullOrWhiteSpace(workspace) || string.IsNullOrWhiteSpace(token))
+            {
+                MessageBox.Show($"Please enter one or both of the Workspace and Token from \"Account\".", null, MessageBoxButton.OK, MessageBoxImage.Error);
+                throw new ArgumentException($"Either or both {nameof(workspace)} and {nameof(token)} is null or whitespace");
             }
 
             var uploader = new EmojiUploader(Properties.Settings.Default.Workspace, Properties.Settings.Default.EmojiAddToken);
@@ -119,11 +137,11 @@ namespace SlackEmojiCreator
                 var name = emoji.Name;
                 byte[] imageArray = ImageUtility.GetByteArray(emoji.BitmapSource);
 
-                // TODO: 非同期なのに一つずつ結果待ちしてるの意味ないかも？？
-                var uploadResult = Task.Run(() => uploader.UploadEmojiAsync(imageArray, name)).Result;
+                var uploadResult = await uploader.UploadEmojiAsync(imageArray, name);
                 if (uploadResult.IsSucceeded)
                 {
                     emoji.Note = $"Upload Suceeded";
+                    emoji.NoteColor = new SolidColorBrush(Colors.Black);
                     succeededEmojis.Add(emoji);
                 }
                 else
@@ -131,13 +149,12 @@ namespace SlackEmojiCreator
                     emoji.Note = $"Failed : {uploadResult.FailureReason}";
                     emoji.NoteColor = new SolidColorBrush(Colors.Red);
                 }
-            }            
-           
-            foreach (var emoji in succeededEmojis)
-            {
-                emojiDatas.Remove(emoji);
             }
-        }        
+
+            return succeededEmojis.AsReadOnly();
+        }
+
+
 
 
         private void ClearButton_Clicked(object sender, RoutedEventArgs e)
