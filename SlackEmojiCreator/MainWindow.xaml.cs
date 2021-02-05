@@ -113,7 +113,7 @@ namespace SlackEmojiCreator
 
             var succeededEmojis = await UploadEmojisAsync(workspace, token);
             var delayBeforeClearTime = 1000;
-            _ = await Task.Delay(delayBeforeClearTime);
+            await Task.Delay(delayBeforeClearTime);
 
             foreach (var emoji in succeededEmojis)
             {
